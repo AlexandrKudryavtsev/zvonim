@@ -1,0 +1,16 @@
+services:
+  zvonim-app:
+    build: .
+    container_name: zvonim-app
+    image: zvonim-app
+    ports:
+      - 8080:8080
+    environment:
+      LOG_LEVEL: "debug"
+      LOG_DESTINATION: "console"
+    networks:
+      - zvonim-network
+
+networks:
+  zvonim-network:
+    name: zvonim-network
