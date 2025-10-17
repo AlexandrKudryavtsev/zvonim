@@ -1,0 +1,166 @@
+basePath: /api
+definitions:
+  entity.JoinRoomRequest:
+    properties:
+      room_id:
+        type: string
+      user_name:
+        type: string
+    type: object
+  entity.JoinRoomResponse:
+    properties:
+      room_id:
+        type: string
+      user_id:
+        type: string
+      users_in_room:
+        items:
+          type: string
+        type: array
+    type: object
+  entity.LeaveRoomRequest:
+    properties:
+      room_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  entity.Room:
+    properties:
+      created_at:
+        type: string
+      room_id:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/entity.User'
+        type: array
+    type: object
+  entity.User:
+    properties:
+      is_online:
+        type: boolean
+      user_id:
+        type: string
+      user_name:
+        type: string
+    type: object
+  v1.response:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: zvonim backend
+  title: github.com/AlexandrKudryavtsev/zvonim
+  version: "1.0"
+paths:
+  /healthz:
+    get:
+      operationId: healthz
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: Check server health
+      tags:
+      - common
+  /room/{room_id}/info:
+    get:
+      description: Get room information and users list
+      parameters:
+      - description: Room ID
+        in: path
+        name: room_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Room'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Get room info
+      tags:
+      - rooms
+  /room/join:
+    post:
+      consumes:
+      - application/json
+      description: Create a new room or join existing one
+      parameters:
+      - description: Join room request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.JoinRoomRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.JoinRoomResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Join or create room
+      tags:
+      - rooms
+  /room/leave:
+    post:
+      consumes:
+      - application/json
+      description: Leave the room
+      parameters:
+      - description: Leave room request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.LeaveRoomRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Leave room
+      tags:
+      - rooms
+schemes:
+- https
+- http
+swagger: "2.0"

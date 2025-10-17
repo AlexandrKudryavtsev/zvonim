@@ -1,3 +1,6 @@
+include .env
+export
+
 LOCAL_BIN:=$(CURDIR)/bin
 PATH:=$(LOCAL_BIN):$(PATH)
 
@@ -31,3 +34,10 @@ test: ### Run unit tests with race detection
 
 generate-docs: ### Generate API documentation using Swagger
 	swag init -g cmd/app/main.go
+
+##@ Dependencies
+
+install-deps: ### Install development dependencies (swag, mockgen)
+	GOBIN=$(LOCAL_BIN) go install github.com/swaggo/swag/cmd/swag@latest
+	GOBIN=$(LOCAL_BIN) go install github.com/golang/mock/mockgen@latest
+.PHONY: install-deps

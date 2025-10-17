@@ -4,14 +4,13 @@
 
 // @BasePath  /api
 // @schemes https http
-
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/AlexandrKudryavtsev/zvonim/config"
+	"github.com/AlexandrKudryavtsev/zvonim/internal/app"
 )
 
 func main() {
@@ -20,5 +19,5 @@ func main() {
 		log.Fatalf("can't init config: %s", err)
 	}
 
-	fmt.Println(cfg)
+	app.Run(cfg)
 }
