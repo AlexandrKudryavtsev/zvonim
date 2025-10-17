@@ -3,6 +3,8 @@ package entity
 import (
 	"fmt"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Room struct {
@@ -24,4 +26,12 @@ type ValidationError struct {
 
 func (e *ValidationError) Error() string {
 	return fmt.Sprintf("validation error: %s %s", e.Field, e.Reason)
+}
+
+func GenerateUserID() string {
+	return uuid.New().String()
+}
+
+func GenerateRoomID() string {
+	return uuid.New().String()
 }

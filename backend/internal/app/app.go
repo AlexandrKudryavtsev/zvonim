@@ -7,6 +7,8 @@ import (
 
 	"github.com/AlexandrKudryavtsev/zvonim/config"
 	v1 "github.com/AlexandrKudryavtsev/zvonim/internal/controller/http/v1"
+	"github.com/AlexandrKudryavtsev/zvonim/internal/usecase"
+	"github.com/AlexandrKudryavtsev/zvonim/internal/usecase/repo"
 	"github.com/AlexandrKudryavtsev/zvonim/pkg/httpserver"
 	"github.com/AlexandrKudryavtsev/zvonim/pkg/logger"
 	"github.com/gin-gonic/gin"
@@ -22,7 +24,13 @@ func Run(cfg *config.Config) {
 	handler := gin.New()
 	handler.Use(gin.Recovery())
 
-	v1.NewRouter(handler, log, nil)
+	roomRepo := repo.NewMemoryRoomRepository()
+	log.Info("Room repository initialized")
+
+	roomUC := usecase.NewRoomService(roomRepo)
+	log.Info("Room service initialized")
+
+	v1.NewRouter(handler, log, roomUC)
 	log.Info("HTTP routes registered")
 
 	httpServer := httpserver.New(handler, httpserver.Port(cfg.HTTP.Port))
