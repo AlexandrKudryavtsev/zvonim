@@ -263,7 +263,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "/api",
 	Schemes:          []string{"https", "http"},
-	Title:            "github.com/AlexandrKudryavtsev/zvonim",
+	Title:            "Zvonim App",
 	Description:      "zvonim backend",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

@@ -33,7 +33,7 @@ test: ### Run unit tests with race detection
 ##@ Development
 
 generate-docs: ### Generate API documentation using Swagger
-	swag init -g cmd/app/main.go
+	PATH="$(LOCAL_BIN):$$PATH" swag init -g cmd/app/main.go
 
 ##@ Dependencies
 

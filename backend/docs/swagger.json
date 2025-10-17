@@ -6,7 +6,7 @@
     "swagger": "2.0",
     "info": {
         "description": "zvonim backend",
-        "title": "github.com/AlexandrKudryavtsev/zvonim",
+        "title": "Zvonim App",
         "contact": {},
         "version": "1.0"
     },

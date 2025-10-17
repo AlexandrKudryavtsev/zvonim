@@ -1,4 +1,4 @@
-// @title           github.com/AlexandrKudryavtsev/zvonim
+// @title           Zvonim App
 // @version         1.0
 // @description     zvonim backend
 

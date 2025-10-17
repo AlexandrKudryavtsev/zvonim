@@ -55,7 +55,7 @@ definitions:
 info:
   contact: {}
   description: zvonim backend
-  title: github.com/AlexandrKudryavtsev/zvonim
+  title: Zvonim App
   version: "1.0"
 paths:
   /healthz:
