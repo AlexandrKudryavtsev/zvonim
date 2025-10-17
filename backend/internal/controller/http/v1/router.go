@@ -6,11 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(handler *gin.Engine, logger logger.Interface, roomUC usecase.RoomUseCase) {
+func NewRouter(handler *gin.Engine, logger logger.Interface, roomUC usecase.RoomUseCase, wsUC usecase.WebSocketUseCase) {
 	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())
 
 	roomHandler := newRoomHandler(roomUC, logger)
+	wsHandler := newWSHandler(wsUC, logger)
 
 	api := handler.Group("/api")
 	{
@@ -19,6 +20,7 @@ func NewRouter(handler *gin.Engine, logger logger.Interface, roomUC usecase.Room
 			rooms.POST("/join", roomHandler.JoinRoom)
 			rooms.GET("/:room_id/info", roomHandler.GetRoomInfo)
 			rooms.POST("/leave", roomHandler.LeaveRoom)
+			rooms.GET("/:room_id/ws", wsHandler.HandleWebSocket)
 		}
 	}
 

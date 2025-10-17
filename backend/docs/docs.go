@@ -170,6 +170,32 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/room/{room_id}/ws": {
+            "get": {
+                "description": "WebSocket endpoint для обмена WebRTC сигналами",
+                "tags": [
+                    "websocket"
+                ],
+                "summary": "WebSocket для сигналинга",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Room ID",
+                        "name": "room_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
         }
     },
     "definitions": {

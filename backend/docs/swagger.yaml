@@ -100,6 +100,24 @@ paths:
       summary: Get room info
       tags:
       - rooms
+  /room/{room_id}/ws:
+    get:
+      description: WebSocket endpoint для обмена WebRTC сигналами
+      parameters:
+      - description: Room ID
+        in: path
+        name: room_id
+        required: true
+        type: string
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      responses: {}
+      summary: WebSocket для сигналинга
+      tags:
+      - websocket
   /room/join:
     post:
       consumes:

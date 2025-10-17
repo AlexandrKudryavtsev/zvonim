@@ -30,7 +30,10 @@ func Run(cfg *config.Config) {
 	roomUC := usecase.NewRoomService(roomRepo)
 	log.Info("Room service initialized")
 
-	v1.NewRouter(handler, log, roomUC)
+	wsUC := usecase.NewWebSocketService(roomRepo)
+	log.Info("WebSocket service initialized")
+
+	v1.NewRouter(handler, log, roomUC, wsUC)
 	log.Info("HTTP routes registered")
 
 	httpServer := httpserver.New(handler, httpserver.Port(cfg.HTTP.Port))
