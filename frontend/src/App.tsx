@@ -1,11 +1,33 @@
-import './App.css'
+import React, { useState } from 'react';
+import { JoinRoomForm } from './components/JoinRoomForm';
+import { RoomLobby } from './components/RoomLobby';
 
-function App() {
-  return (
-    <>
-      <h1>Znomin App</h1>
-    </>
-  )
+export interface RoomData {
+  roomId: string;
+  userId: string;
+  userName: string;
 }
 
-export default App
+function App() {
+  const [roomData, setRoomData] = useState<RoomData | null>(null);
+
+  const handleJoinSuccess = (data: RoomData) => {
+    setRoomData(data);
+  };
+
+  const handleLeaveRoom = () => {
+    setRoomData(null);
+  };
+
+  return (
+    <div className="App">
+      {!roomData ? (
+        <JoinRoomForm onJoinSuccess={handleJoinSuccess} />
+      ) : (
+        <RoomLobby roomData={roomData} onLeaveRoom={handleLeaveRoom} />
+      )}
+    </div>
+  );
+}
+
+export default App;
