@@ -6,14 +6,13 @@ interface VideoCallProps {
   userName: string;
 }
 
-export const VideoCall: React.FC<VideoCallProps> = ({ userId, userName }) => {
+export const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideosRef = useRef<Map<string, HTMLVideoElement>>(new Map());
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(new Map());
 
-  // Обновление локального видео
   useEffect(() => {
     const updateLocalVideo = () => {
       const streams = webRTCService.getMediaStreams();
@@ -24,11 +23,9 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userId, userName }) => {
 
     updateLocalVideo();
 
-    // Подписка на изменения потоков
     const handleRemoteStream = (remoteUserId: string, stream: MediaStream) => {
       setRemoteStreams(prev => new Map(prev.set(remoteUserId, stream)));
       
-      // Обновляем видео элемент когда он будет в DOM
       setTimeout(() => {
         const videoElement = remoteVideosRef.current.get(remoteUserId);
         if (videoElement) {
@@ -40,11 +37,10 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userId, userName }) => {
     webRTCService.onRemoteStream(handleRemoteStream);
 
     return () => {
-      // Cleanup
+      // todo: Cleanup
     };
   }, []);
 
-  // Обновление удаленных видео когда они добавляются в DOM
   useEffect(() => {
     remoteStreams.forEach((stream, remoteUserId) => {
       const videoElement = remoteVideosRef.current.get(remoteUserId);
@@ -67,7 +63,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userId, userName }) => {
   };
 
   const getRemoteUserName = (remoteUserId: string) => {
-    // Здесь можно добавить логику для получения имени пользователя
+    // TODO: добавить логику для получения имени пользователя
     return `Пользователь ${remoteUserId.slice(0, 8)}`;
   };
 
@@ -75,7 +71,6 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userId, userName }) => {
     <div style={{ padding: '20px', background: '#f5f5f5', borderRadius: '8px' }}>
       <h3>Видео-звонок</h3>
       
-      {/* Локальное видео */}
       <div style={{ marginBottom: '20px' }}>
         <h4>Ваше видео ({userName})</h4>
         <video
@@ -92,7 +87,6 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userId, userName }) => {
         />
       </div>
 
-      {/* Удаленные видео */}
       {Array.from(remoteStreams.keys()).length > 0 && (
         <div style={{ marginBottom: '20px' }}>
           <h4>Участники звонка:</h4>
@@ -123,7 +117,6 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userId, userName }) => {
         </div>
       )}
 
-      {/* Элементы управления */}
       <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
         <button
           onClick={toggleVideo}
