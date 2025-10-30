@@ -13,7 +13,7 @@ class WebSocketService {
   connect(roomId: string, userId: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const wsUrl = `${config.websocket.baseUrl}/room/${roomId}/ws?user_id=${userId}`;
-      
+
       try {
         this.socket = new WebSocket(wsUrl);
         this.isManualClose = false;
@@ -35,7 +35,7 @@ class WebSocketService {
 
         this.socket.onclose = (event) => {
           console.log('WebSocket disconnected:', event.code, event.reason);
-          
+
           if (!this.isManualClose && this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
             console.log(`Attempting to reconnect... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
@@ -76,11 +76,11 @@ class WebSocketService {
   }
 
   removeMessageHandler(handler: MessageHandler) {
-    this.messageHandlers = this.messageHandlers.filter(h => h !== handler);
+    this.messageHandlers = this.messageHandlers.filter((h) => h !== handler);
   }
 
   private notifyHandlers(message: WSMessage) {
-    this.messageHandlers.forEach(handler => {
+    this.messageHandlers.forEach((handler) => {
       try {
         handler(message);
       } catch (error) {

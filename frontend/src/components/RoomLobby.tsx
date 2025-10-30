@@ -17,7 +17,7 @@ export const RoomLobby: React.FC<RoomLobbyProps> = ({ roomData, onLeaveRoom }) =
     leaveRoom,
     startCallWithUser,
     initializeLocalMedia,
-    stopAllMedia
+    stopAllMedia,
   } = useRoom({
     roomId: roomData.roomId,
     userId: roomData.userId,
@@ -99,7 +99,7 @@ export const RoomLobby: React.FC<RoomLobbyProps> = ({ roomData, onLeaveRoom }) =
               width: '10px',
               height: '10px',
               borderRadius: '50%',
-              background: isConnected ? '#28a745' : '#dc3545'
+              background: isConnected ? '#28a745' : '#dc3545',
             }}
           />
           <span style={{ color: isConnected ? '#28a745' : '#dc3545' }}>
@@ -114,7 +114,7 @@ export const RoomLobby: React.FC<RoomLobbyProps> = ({ roomData, onLeaveRoom }) =
               width: '10px',
               height: '10px',
               borderRadius: '50%',
-              background: callState.hasLocalStream ? '#28a745' : '#ffc107'
+              background: callState.hasLocalStream ? '#28a745' : '#ffc107',
             }}
           />
           <span style={{ color: callState.hasLocalStream ? '#28a745' : '#ffc107' }}>
@@ -143,7 +143,7 @@ export const RoomLobby: React.FC<RoomLobbyProps> = ({ roomData, onLeaveRoom }) =
                 background: isInitializingMedia ? '#6c757d' : '#007bff',
                 color: 'white',
                 border: 'none',
-                borderRadius: '4px'
+                borderRadius: '4px',
               }}
             >
               {isInitializingMedia ? 'Инициализация...' : '📹 Включить камеру/микрофон'}
@@ -158,7 +158,7 @@ export const RoomLobby: React.FC<RoomLobbyProps> = ({ roomData, onLeaveRoom }) =
                 background: '#dc3545',
                 color: 'white',
                 border: 'none',
-                borderRadius: '4px'
+                borderRadius: '4px',
               }}
             >
               🛑 Остановить все медиа
@@ -194,7 +194,7 @@ export const RoomLobby: React.FC<RoomLobbyProps> = ({ roomData, onLeaveRoom }) =
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  background: user.user_id === roomData.userId ? '#e3f2fd' : 'white'
+                  background: user.user_id === roomData.userId ? '#e3f2fd' : 'white',
                 }}
               >
                 <div style={{ flex: 1 }}>
@@ -215,7 +215,7 @@ export const RoomLobby: React.FC<RoomLobbyProps> = ({ roomData, onLeaveRoom }) =
                         width: '10px',
                         height: '10px',
                         borderRadius: '50%',
-                        background: user.is_online ? '#28a745' : '#dc3545'
+                        background: user.is_online ? '#28a745' : '#dc3545',
                       }}
                     />
                     <span style={{ fontSize: '12px', color: '#666' }}>
@@ -234,7 +234,7 @@ export const RoomLobby: React.FC<RoomLobbyProps> = ({ roomData, onLeaveRoom }) =
                         color: 'white',
                         border: 'none',
                         borderRadius: '4px',
-                        fontSize: '12px'
+                        fontSize: '12px',
                       }}
                     >
                       {isInitializingMedia ? 'Подготовка...' : '📞 Позвонить'}

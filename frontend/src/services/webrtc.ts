@@ -2,10 +2,10 @@ import { config } from '../config';
 import type { RTCPeerConnectionWithUser, MediaStreams, CallState } from '../types/webrtc';
 
 class WebRTCService {
-    private peerConnections: Map<string, RTCPeerConnectionWithUser> = new Map();
+    private peerConnections = new Map<string, RTCPeerConnectionWithUser>();
     private mediaStreams: MediaStreams = {
         local: null,
-        remote: new Map()
+        remote: new Map(),
     };
     private onRemoteStreamCallbacks: ((userId: string, stream: MediaStream) => void)[] = [];
     private onCallStateChangeCallbacks: ((state: CallState) => void)[] = [];
@@ -14,7 +14,7 @@ class WebRTCService {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: true,
-                audio: true
+                audio: true,
             });
 
             this.mediaStreams.local = stream;
@@ -28,14 +28,14 @@ class WebRTCService {
 
     createPeerConnection(userId: string): RTCPeerConnectionWithUser {
         const configuration: RTCConfiguration = {
-            iceServers: config.webrtc.stunServers.map(stun => ({ urls: stun }))
+            iceServers: config.webrtc.stunServers.map((stun) => ({ urls: stun })),
         };
 
         const pc = new RTCPeerConnection(configuration) as RTCPeerConnectionWithUser;
         pc.userId = userId;
 
         if (this.mediaStreams.local) {
-            this.mediaStreams.local.getTracks().forEach(track => {
+            this.mediaStreams.local.getTracks().forEach((track) => {
                 pc.addTrack(track, this.mediaStreams.local!);
             });
         }
@@ -131,13 +131,13 @@ class WebRTCService {
 
     // Уведомление о новом удаленном потоке
     private notifyRemoteStream(userId: string, stream: MediaStream) {
-        this.onRemoteStreamCallbacks.forEach(callback => callback(userId, stream));
+        this.onRemoteStreamCallbacks.forEach((callback) => callback(userId, stream));
     }
 
     // Уведомление об изменении состояния звонка
     private notifyCallStateChange() {
         const state = this.getCallState();
-        this.onCallStateChangeCallbacks.forEach(callback => callback(state));
+        this.onCallStateChangeCallbacks.forEach((callback) => callback(state));
     }
 
     // Получение текущего состояния звонка
@@ -145,7 +145,7 @@ class WebRTCService {
         return {
             isInCall: this.mediaStreams.remote.size > 0,
             hasLocalStream: !!this.mediaStreams.local,
-            remoteUsers: Array.from(this.mediaStreams.remote.keys())
+            remoteUsers: Array.from(this.mediaStreams.remote.keys()),
         };
     }
 
@@ -164,7 +164,7 @@ class WebRTCService {
 
         // Останавливаем локальные треки
         if (this.mediaStreams.local) {
-            this.mediaStreams.local.getTracks().forEach(track => track.stop());
+            this.mediaStreams.local.getTracks().forEach((track) => track.stop());
             this.mediaStreams.local = null;
         }
 
@@ -177,7 +177,7 @@ class WebRTCService {
     // Установка/снятие медиа (video/audio)
     toggleVideo(enabled: boolean): void {
         if (this.mediaStreams.local) {
-            this.mediaStreams.local.getVideoTracks().forEach(track => {
+            this.mediaStreams.local.getVideoTracks().forEach((track) => {
                 track.enabled = enabled;
             });
         }
@@ -185,7 +185,7 @@ class WebRTCService {
 
     toggleAudio(enabled: boolean): void {
         if (this.mediaStreams.local) {
-            this.mediaStreams.local.getAudioTracks().forEach(track => {
+            this.mediaStreams.local.getAudioTracks().forEach((track) => {
                 track.enabled = enabled;
             });
         }

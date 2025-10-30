@@ -24,8 +24,8 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
     updateLocalVideo();
 
     const handleRemoteStream = (remoteUserId: string, stream: MediaStream) => {
-      setRemoteStreams(prev => new Map(prev.set(remoteUserId, stream)));
-      
+      setRemoteStreams((prev) => new Map(prev.set(remoteUserId, stream)));
+
       setTimeout(() => {
         const videoElement = remoteVideosRef.current.get(remoteUserId);
         if (videoElement) {
@@ -70,7 +70,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
   return (
     <div style={{ padding: '20px', background: '#f5f5f5', borderRadius: '8px' }}>
       <h3>Видео-звонок</h3>
-      
+
       <div style={{ marginBottom: '20px' }}>
         <h4>Ваше видео ({userName})</h4>
         <video
@@ -82,7 +82,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
             width: '300px',
             height: '200px',
             background: '#000',
-            borderRadius: '8px'
+            borderRadius: '8px',
           }}
         />
       </div>
@@ -107,7 +107,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
                     width: '300px',
                     height: '200px',
                     background: '#000',
-                    borderRadius: '8px'
+                    borderRadius: '8px',
                   }}
                 />
                 <div>{getRemoteUserName(remoteUserId)}</div>
@@ -125,12 +125,12 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
             background: isVideoEnabled ? '#28a745' : '#dc3545',
             color: 'white',
             border: 'none',
-            borderRadius: '4px'
+            borderRadius: '4px',
           }}
         >
           {isVideoEnabled ? '📹 Выкл. видео' : '📹 Вкл. видео'}
         </button>
-        
+
         <button
           onClick={toggleAudio}
           style={{
@@ -138,7 +138,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
             background: isAudioEnabled ? '#28a745' : '#dc3545',
             color: 'white',
             border: 'none',
-            borderRadius: '4px'
+            borderRadius: '4px',
           }}
         >
           {isAudioEnabled ? '🎤 Выкл. аудио' : '🎤 Вкл. аудио'}

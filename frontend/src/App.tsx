@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { JoinRoomForm } from './components/JoinRoomForm';
 import { RoomLobby } from './components/RoomLobby';
 
@@ -20,7 +20,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className='App'>
       {!roomData ? (
         <JoinRoomForm onJoinSuccess={handleJoinSuccess} />
       ) : (

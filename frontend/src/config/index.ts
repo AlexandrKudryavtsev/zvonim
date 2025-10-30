@@ -19,7 +19,7 @@ export const config: AppConfig = {
   },
   webrtc: {
     stunServers: import.meta.env.VITE_TUNE_SERVERS
-      ? import.meta.env.VITE_TUNE_SERVERS.split(',').map(server => server.trim())
+      ? import.meta.env.VITE_TUNE_SERVERS.split(',').map((server) => server.trim())
       : [],
   },
 } as const;

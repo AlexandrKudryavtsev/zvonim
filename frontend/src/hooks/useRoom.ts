@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-case-declarations */
 import { useState, useEffect, useCallback } from 'react';
 import type { UserInfo } from '../types/room';
@@ -23,7 +22,7 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
   const [callState, setCallState] = useState<CallState>({
     isInCall: false,
     hasLocalStream: false,
-    remoteUsers: []
+    remoteUsers: [],
   });
 
   const loadRoomInfo = useCallback(async () => {
@@ -41,11 +40,11 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
         webSocketService.sendMessage({
           type: 'ice_candidate',
           data: { candidate: candidate.toJSON() },
-          to: targetUserId
+          to: targetUserId,
         });
       });
 
-      webRTCService.onRemoteStream((remoteUserId, stream) => {
+      webRTCService.onRemoteStream((remoteUserId) => {
         console.log('Remote stream received from:', remoteUserId);
       });
 
@@ -64,13 +63,13 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
         case 'offer':
           const offerMessage = message as OfferMessage;
           console.log('Received offer from:', message.from);
-          
+
           const answerSdp = await webRTCService.handleOffer(message.from, offerMessage.data.sdp);
-          
+
           webSocketService.sendMessage({
             type: 'answer',
             data: { sdp: answerSdp },
-            to: message.from
+            to: message.from,
           });
           break;
 
@@ -97,14 +96,14 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
     switch (message.type) {
       case 'user_joined':
         const joinMessage = message as UserJoinedMessage;
-        setUsers(prev => {
-          if (prev.find(user => user.user_id === joinMessage.from)) {
+        setUsers((prev) => {
+          if (prev.find((user) => user.user_id === joinMessage.from)) {
             return prev;
           }
           return [...prev, {
             user_id: joinMessage.from,
             user_name: 'Новый пользователь',
-            is_online: true
+            is_online: true,
           }];
         });
         loadRoomInfo();
@@ -112,8 +111,8 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
 
       case 'user_left':
         const leftMessage = message as UserLeftMessage;
-        setUsers(prev => prev.filter(user => user.user_id !== leftMessage.from));
-        
+        setUsers((prev) => prev.filter((user) => user.user_id !== leftMessage.from));
+
         if (leftMessage.from === userId && onUserLeft) {
           onUserLeft();
         }
@@ -137,11 +136,11 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
       }
 
       const offerSdp = await webRTCService.createOffer(targetUserId);
-      
+
       webSocketService.sendMessage({
         type: 'offer',
         data: { sdp: offerSdp },
-        to: targetUserId
+        to: targetUserId,
       });
 
     } catch (err) {
@@ -168,9 +167,8 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
       await webSocketService.connect(roomId, userId);
       setIsConnected(true);
       setError('');
-      
+
       webSocketService.addMessageHandler(handleWebSocketMessage);
-      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ошибка подключения WebSocket');
       setIsConnected(false);
@@ -210,7 +208,7 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
-    
+
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       stopAllMedia();
