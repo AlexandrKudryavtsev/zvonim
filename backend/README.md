@@ -74,7 +74,7 @@
 
 ### Подключение к WebSocket
 
-**URL:** `wss://your-domain.com/api/room/{room_id}/ws?user_id={user_id}`
+**URL:** `ws://your-domain.com/api/room/{room_id}/ws?user_id={user_id}`
 
 **Параметры:**
 - `room_id` - ID комнаты (из пути)
@@ -83,7 +83,7 @@
 **Пример:**
 ```javascript
 const ws = new WebSocket(
-  `wss://your-domain.com/api/room/room-123/ws?user_id=user-456`
+  `ws://your-domain.com/api/room/room-123/ws?user_id=user-456`
 );
 ```
 
