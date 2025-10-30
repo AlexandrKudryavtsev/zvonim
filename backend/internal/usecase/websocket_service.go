@@ -134,7 +134,24 @@ func (uc *websocketService) unregisterConnection(roomID, userID string) {
 	uc.mu.Lock()
 	defer uc.mu.Unlock()
 
+	message := &entity.WSMessage{
+		Type: "user_left",
+		Data: map[string]string{"user_id": userID},
+		From: userID,
+	}
+
 	if roomConnections, exists := uc.connections[roomID]; exists {
+		data, err := json.Marshal(message)
+		if err == nil {
+			for targetUserID, conn := range roomConnections {
+				if targetUserID != userID {
+					go func(targetUserID string, conn WSConnection) {
+						_ = conn.WriteMessage(1, data)
+					}(targetUserID, conn)
+				}
+			}
+		}
+
 		delete(roomConnections, userID)
 		if len(roomConnections) == 0 {
 			delete(uc.connections, roomID)

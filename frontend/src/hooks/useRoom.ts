@@ -44,8 +44,8 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
         });
       });
 
-      webRTCService.onRemoteStream((remoteUserId) => {
-        console.log('Remote stream received from:', remoteUserId);
+      webRTCService.onRemoteStream((remoteUserId, stream) => {
+        console.log('Remote stream received from:', remoteUserId, stream);
       });
 
       webRTCService.onCallStateChange((state) => {
@@ -97,25 +97,32 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
       case 'user_joined':
         const joinMessage = message as UserJoinedMessage;
         setUsers((prev) => {
-          if (prev.find((user) => user.user_id === joinMessage.from)) {
+          if (prev.find((user) => user.user_id === joinMessage.data.user_id)) {
             return prev;
           }
           return [...prev, {
-            user_id: joinMessage.from,
+            user_id: joinMessage.data.user_id,
             user_name: 'Новый пользователь',
             is_online: true,
           }];
         });
-        loadRoomInfo();
         break;
 
       case 'user_left':
         const leftMessage = message as UserLeftMessage;
-        setUsers((prev) => prev.filter((user) => user.user_id !== leftMessage.from));
 
-        if (leftMessage.from === userId && onUserLeft) {
-          onUserLeft();
+        // TODO исправить типизацию
+        const pc = (webRTCService as any).peerConnections.get(leftMessage.data.user_id);
+        if (pc) {
+          pc.close();
+          (webRTCService as any).peerConnections.delete(leftMessage.data.user_id);
         }
+
+        (webRTCService as any).mediaStreams.remote.delete(leftMessage.data.user_id);
+
+        (webRTCService as any).notifyCallStateChange();
+
+        setUsers((prev) => prev.filter((user) => user.user_id !== leftMessage.data.user_id));
         break;
 
       case 'offer':
@@ -127,7 +134,7 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
       default:
         console.log('Unhandled message type:', message.type);
     }
-  }, [userId, loadRoomInfo, onUserLeft, handleWebRTCSignaling]);
+  }, [handleWebRTCSignaling]);
 
   const startCallWithUser = useCallback(async (targetUserId: string) => {
     try {
@@ -183,26 +190,39 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
 
   const leaveRoom = useCallback(async () => {
     try {
-      stopAllMedia();
+      console.log('Leaving room...');
+
+      if (onUserLeft) {
+        console.log('Calling onUserLeft callback');
+        onUserLeft();
+      }
+
       await apiService.leaveRoom({
         room_id: roomId,
         user_id: userId,
       });
+      console.log('API leave request completed');
+
     } catch (err) {
       console.error('Ошибка при выходе из комнаты:', err);
     } finally {
+      console.log('Cleaning up local state...');
+      stopAllMedia();
       disconnectWebSocket();
     }
-  }, [roomId, userId, disconnectWebSocket, stopAllMedia]);
+  }, [roomId, userId, disconnectWebSocket, stopAllMedia, onUserLeft]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
       stopAllMedia();
       if (navigator.sendBeacon) {
-        const data = JSON.stringify({
-          room_id: roomId,
-          user_id: userId,
-        });
+        const data = new Blob([
+          JSON.stringify({
+            room_id: roomId,
+            user_id: userId,
+          }),
+        ], { type: 'application/json' });
+
         navigator.sendBeacon(`${config.api.baseUrl}/room/leave`, data);
       }
     };
@@ -211,17 +231,31 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      stopAllMedia();
-      disconnectWebSocket();
     };
-  }, [roomId, userId, disconnectWebSocket, stopAllMedia]);
+  }, [roomId, userId, stopAllMedia]);
 
   useEffect(() => {
-    loadRoomInfo();
-    connectWebSocket();
-    initializeWebRTC();
+    let isMounted = true;
+
+    const initialize = async () => {
+      if (!isMounted) return;
+
+      try {
+        await loadRoomInfo();
+        await initializeWebRTC();
+        await connectWebSocket();
+      } catch (err) {
+        if (isMounted) {
+          console.error('Initialization error:', err);
+          setError('Ошибка инициализации комнаты');
+        }
+      }
+    };
+
+    initialize();
 
     return () => {
+      isMounted = false;
       stopAllMedia();
       disconnectWebSocket();
     };

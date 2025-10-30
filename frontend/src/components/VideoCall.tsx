@@ -34,10 +34,43 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
       }, 100);
     };
 
+    const handleRemoteStreamRemoved = (remoteUserId: string) => {
+      console.log('Remote stream removed for user:', remoteUserId);
+
+      const videoElement = remoteVideosRef.current.get(remoteUserId);
+      if (videoElement) {
+        videoElement.srcObject = null;
+      }
+
+      setRemoteStreams((prev) => {
+        const newMap = new Map(prev);
+        newMap.delete(remoteUserId);
+        return newMap;
+      });
+    };
+
     webRTCService.onRemoteStream(handleRemoteStream);
 
+    const handleCallStateChange = (state: any) => {
+      const currentRemoteUsers = Array.from(remoteStreams.keys());
+      const newRemoteUsers = state.remoteUsers;
+
+      const removedUsers = currentRemoteUsers.filter((userId) => !newRemoteUsers.includes(userId));
+
+      removedUsers.forEach((userId) => {
+        handleRemoteStreamRemoved(userId);
+      });
+    };
+
+    webRTCService.onCallStateChange(handleCallStateChange);
+
     return () => {
-      // todo: Cleanup
+      remoteVideosRef.current.forEach((videoElement) => {
+        videoElement.srcObject = null;
+      });
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = null;
+      }
     };
   }, []);
 
@@ -91,12 +124,15 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
         <div style={{ marginBottom: '20px' }}>
           <h4>Участники звонка:</h4>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-            {Array.from(remoteStreams.entries()).map(([remoteUserId]) => (
+            {Array.from(remoteStreams.entries()).map(([remoteUserId, stream]) => (
               <div key={remoteUserId} style={{ textAlign: 'center' }}>
                 <video
                   ref={(el) => {
                     if (el) {
                       remoteVideosRef.current.set(remoteUserId, el);
+                      if (stream && el.srcObject !== stream) {
+                        el.srcObject = stream;
+                      }
                     } else {
                       remoteVideosRef.current.delete(remoteUserId);
                     }
