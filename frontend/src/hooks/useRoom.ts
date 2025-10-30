@@ -7,6 +7,7 @@ import { apiService } from '../services/api';
 import { webSocketService } from '../services/websocket';
 import { webRTCService } from '../services/webrtc';
 import type { CallState } from '../types/webrtc';
+import { config } from '../config';
 
 interface UseRoomProps {
   roomId: string;
@@ -82,7 +83,7 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
         case 'ice_candidate':
           const iceMessage = message as IceCandidateMessage;
           console.log('Received ICE candidate from:', message.from);
-          await webRTCService.handleIceCandidate(message.from, iceMessage.data.candidate as any);
+          await webRTCService.handleIceCandidate(message.from, iceMessage.data.candidate as RTCIceCandidateInit);
           break;
       }
     } catch (err) {
@@ -196,7 +197,6 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
     }
   }, [roomId, userId, disconnectWebSocket, stopAllMedia]);
 
-  // Обработчик закрытия вкладки/браузера
   useEffect(() => {
     const handleBeforeUnload = () => {
       stopAllMedia();
@@ -205,7 +205,7 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
           room_id: roomId,
           user_id: userId,
         });
-        navigator.sendBeacon(`http://localhost:8080/api/room/leave`, data);
+        navigator.sendBeacon(`${config.api.baseUrl}/room/leave`, data);
       }
     };
 

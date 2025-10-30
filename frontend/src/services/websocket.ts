@@ -1,3 +1,4 @@
+import { config } from '../config';
 import type { WSMessage } from '../types/websocket';
 
 type MessageHandler = (message: WSMessage) => void;
@@ -11,7 +12,7 @@ class WebSocketService {
 
   connect(roomId: string, userId: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      const wsUrl = `ws://localhost:8080/api/room/${roomId}/ws?user_id=${userId}`;
+      const wsUrl = `${config.websocket.baseUrl}/room/${roomId}/ws?user_id=${userId}`;
       
       try {
         this.socket = new WebSocket(wsUrl);

@@ -1,3 +1,4 @@
+import { config } from '../config';
 import type { RTCPeerConnectionWithUser, MediaStreams, CallState } from '../types/webrtc';
 
 class WebRTCService {
@@ -27,10 +28,7 @@ class WebRTCService {
 
     createPeerConnection(userId: string): RTCPeerConnectionWithUser {
         const configuration: RTCConfiguration = {
-            iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun1.l.google.com:19302' }
-            ]
+            iceServers: config.webrtc.stunServers.map(stun => ({ urls: stun }))
         };
 
         const pc = new RTCPeerConnection(configuration) as RTCPeerConnectionWithUser;

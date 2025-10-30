@@ -91,7 +91,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
         <div style={{ marginBottom: '20px' }}>
           <h4>Участники звонка:</h4>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-            {Array.from(remoteStreams.entries()).map(([remoteUserId, stream]) => (
+            {Array.from(remoteStreams.entries()).map(([remoteUserId]) => (
               <div key={remoteUserId} style={{ textAlign: 'center' }}>
                 <video
                   ref={(el) => {
