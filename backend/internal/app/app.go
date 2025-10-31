@@ -30,7 +30,7 @@ func Run(cfg *config.Config) {
 	roomUC := usecase.NewRoomService(roomRepo)
 	log.Info("Room service initialized")
 
-	wsUC := usecase.NewWebSocketService(roomRepo)
+	wsUC := usecase.NewWebSocketService(roomRepo, cfg.WS.UserJoinDelay)
 	log.Info("WebSocket service initialized")
 
 	v1.NewRouter(handler, log, roomUC, wsUC)

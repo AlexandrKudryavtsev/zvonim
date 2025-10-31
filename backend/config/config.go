@@ -30,6 +30,7 @@ type (
 		PongWait        time.Duration `yaml:"pong_wait"`
 		PingPeriod      time.Duration `yaml:"ping_period"`
 		MaxMessageSize  int64         `yaml:"max_message_size"`
+		UserJoinDelay   time.Duration `yaml:"user_join_delay"`
 	}
 )
 

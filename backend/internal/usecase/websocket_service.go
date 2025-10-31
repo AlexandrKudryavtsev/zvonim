@@ -1,5 +1,3 @@
-// [file name]: websocket_service.go
-// [file content begin]
 package usecase
 
 import (
@@ -13,17 +11,19 @@ import (
 )
 
 type websocketService struct {
-	roomRepo    RoomRepo
-	connections map[string]map[string]WSConnection
-	mu          sync.RWMutex
-	shutdown    chan struct{}
+	roomRepo      RoomRepo
+	connections   map[string]map[string]WSConnection
+	mu            sync.RWMutex
+	shutdown      chan struct{}
+	userJoinDelay time.Duration
 }
 
-func NewWebSocketService(roomRepo RoomRepo) *websocketService {
+func NewWebSocketService(roomRepo RoomRepo, userJoinDelay time.Duration) *websocketService {
 	return &websocketService{
-		roomRepo:    roomRepo,
-		connections: make(map[string]map[string]WSConnection),
-		shutdown:    make(chan struct{}),
+		roomRepo:      roomRepo,
+		connections:   make(map[string]map[string]WSConnection),
+		shutdown:      make(chan struct{}),
+		userJoinDelay: userJoinDelay,
 	}
 }
 
@@ -160,9 +160,7 @@ func (uc *websocketService) unregisterConnection(roomID, userID string) {
 }
 
 func (uc *websocketService) broadcastUserJoined(roomID, userID string) {
-	// время на установление соединения
-	// TODO: перенести в конфиг
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(uc.userJoinDelay)
 
 	message := &entity.WSMessage{
 		Type: "user_joined",

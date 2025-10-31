@@ -11,3 +11,4 @@ websocket:
   pong_wait: '60s'
   ping_period: '54s'
   max_message_size: 512
+  user_join_delay: '100ms'
