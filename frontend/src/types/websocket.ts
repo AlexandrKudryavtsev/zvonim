@@ -10,6 +10,7 @@ export interface UserJoinedMessage extends WSMessage {
     type: 'user_joined';
     data: {
         user_id: string;
+        user_name: string;
     };
 }
 

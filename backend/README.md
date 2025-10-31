@@ -110,7 +110,8 @@ interface WSMessage {
 {
   "type": "user_joined",
   "data": {
-    "user_id": "новый-user-id"
+    "user_id": "новый-user-id",
+    "user_name": "имя"
   },
   "from": "новый-user-id"
 }

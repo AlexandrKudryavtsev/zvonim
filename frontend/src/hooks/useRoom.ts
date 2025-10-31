@@ -102,7 +102,7 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
           }
           return [...prev, {
             user_id: joinMessage.data.user_id,
-            user_name: 'Новый пользователь',
+            user_name: joinMessage.data.user_name,
             is_online: true,
           }];
         });

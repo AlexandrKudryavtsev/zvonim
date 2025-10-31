@@ -162,9 +162,25 @@ func (uc *websocketService) unregisterConnection(roomID, userID string) {
 func (uc *websocketService) broadcastUserJoined(roomID, userID string) {
 	time.Sleep(uc.userJoinDelay)
 
+	users, err := uc.roomRepo.GetRoomUsers(context.Background(), roomID)
+	if err != nil {
+		return
+	}
+
+	var userName string
+	for _, user := range users {
+		if user.ID == userID {
+			userName = user.Name
+			break
+		}
+	}
+
 	message := &entity.WSMessage{
 		Type: "user_joined",
-		Data: map[string]string{"user_id": userID},
+		Data: map[string]string{
+			"user_id":   userID,
+			"user_name": userName,
+		},
 		From: userID,
 	}
 
