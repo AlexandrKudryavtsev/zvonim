@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { apiService } from '../services/api';
+import { MainLayout } from './layout/MainLayout';
+import { Button } from './ui/Button';
 import cls from './JoinRoomForm.module.scss';
 
 interface JoinRoomFormProps {
@@ -39,7 +41,7 @@ export const JoinRoomForm: React.FC<JoinRoomFormProps> = ({ onJoinSuccess }) => 
     };
 
     return (
-        <div className={cls.container}>
+        <MainLayout centerContent className={cls.container}>
             <div className={cls.header}>
                 <img className={cls.logo} alt='звоним логотип' src='/logo.svg' />
                 <h1 className={cls.title}>Звоним</h1>
@@ -75,14 +77,14 @@ export const JoinRoomForm: React.FC<JoinRoomFormProps> = ({ onJoinSuccess }) => 
                     </div>
                 )}
 
-                <button
+                <Button
+                fullWidth
                     type='submit'
                     disabled={isLoading || !userName.trim()}
-                    style={{ width: '100%', padding: '10px', background: '#007bff', color: 'white', border: 'none' }}
                 >
                     {isLoading ? 'Подключение...' : roomId ? 'Войти в комнату' : 'Создать комнату'}
-                </button>
+                </Button>
             </form>
-        </div>
+        </MainLayout>
     );
 };

@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { JoinRoomForm } from './components/JoinRoomForm';
 import { RoomLobby } from './components/RoomLobby';
-import cls from './App.module.scss';
+import { JoinMeeting } from './pages/JoinMeeting';
 
 export interface RoomData {
   roomId: string;
@@ -21,13 +20,17 @@ function App() {
   };
 
   return (
-    <div className={cls.app}>
+    <>
       {!roomData ? (
-        <JoinRoomForm onJoinSuccess={handleJoinSuccess} />
+        <JoinMeeting onJoinSuccess={(el) => handleJoinSuccess({
+          roomId: el.meetingId,
+          userId: el.userId,
+          userName: el.userName,
+        })} />
       ) : (
         <RoomLobby roomData={roomData} onLeaveRoom={handleLeaveRoom} />
       )}
-    </div>
+    </>
   );
 }
 
