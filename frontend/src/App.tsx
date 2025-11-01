@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { JoinRoomForm } from './components/JoinRoomForm';
 import { RoomLobby } from './components/RoomLobby';
+import cls from './App.module.scss';
 
 export interface RoomData {
   roomId: string;
@@ -20,7 +21,7 @@ function App() {
   };
 
   return (
-    <div className='App'>
+    <div className={cls.app}>
       {!roomData ? (
         <JoinRoomForm onJoinSuccess={handleJoinSuccess} />
       ) : (

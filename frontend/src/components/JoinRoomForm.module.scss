@@ -1,0 +1,25 @@
+.container {
+    max-width: 400px;
+    height: 100%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .title {
+        font-size: 48px;
+        text-align: center;
+        font-weight: 500;
+    }
+
+    .logo {
+        height: 72px;
+    }
+}

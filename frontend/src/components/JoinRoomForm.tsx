@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { apiService } from '../services/api';
+import cls from './JoinRoomForm.module.scss';
 
 interface JoinRoomFormProps {
     onJoinSuccess: (data: { roomId: string; userId: string; userName: string }) => void;
@@ -38,8 +39,11 @@ export const JoinRoomForm: React.FC<JoinRoomFormProps> = ({ onJoinSuccess }) => 
     };
 
     return (
-        <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
-            <h1>Видео-комната</h1>
+        <div className={cls.container}>
+            <div className={cls.header}>
+                <img className={cls.logo} alt='звоним логотип' src='/logo.svg' />
+                <h1 className={cls.title}>Звоним</h1>
+            </div>
             <form onSubmit={handleSubmit}>
                 <div style={{ marginBottom: '15px' }}>
                     <label htmlFor='userName'>Ваше имя:</label>
@@ -54,7 +58,7 @@ export const JoinRoomForm: React.FC<JoinRoomFormProps> = ({ onJoinSuccess }) => 
                 </div>
 
                 <div style={{ marginBottom: '15px' }}>
-                    <label htmlFor='roomId'>ID комнаты (необязательно):</label>
+                    <label htmlFor='roomId'>ID встреча (необязательно):</label>
                     <input
                         id='roomId'
                         type='text'
