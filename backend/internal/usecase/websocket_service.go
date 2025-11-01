@@ -11,16 +11,16 @@ import (
 )
 
 type websocketService struct {
-	roomRepo      RoomRepo
+	meetingRepo   MeetingRepo
 	connections   map[string]map[string]WSConnection
 	mu            sync.RWMutex
 	shutdown      chan struct{}
 	userJoinDelay time.Duration
 }
 
-func NewWebSocketService(roomRepo RoomRepo, userJoinDelay time.Duration) *websocketService {
+func NewWebSocketService(meetingRepo MeetingRepo, userJoinDelay time.Duration) *websocketService {
 	return &websocketService{
-		roomRepo:      roomRepo,
+		meetingRepo:   meetingRepo,
 		connections:   make(map[string]map[string]WSConnection),
 		shutdown:      make(chan struct{}),
 		userJoinDelay: userJoinDelay,
@@ -29,20 +29,20 @@ func NewWebSocketService(roomRepo RoomRepo, userJoinDelay time.Duration) *websoc
 
 var _ WebSocketUseCase = (*websocketService)(nil)
 
-func (uc *websocketService) HandleConnection(ctx context.Context, conn WSConnection, roomID, userID string) {
+func (uc *websocketService) HandleConnection(ctx context.Context, conn WSConnection, meetingID, userID string) {
 	defer func() {
 		conn.Close()
 	}()
 
-	uc.registerConnection(roomID, userID, conn)
-	defer uc.unregisterConnection(roomID, userID)
+	uc.registerConnection(meetingID, userID, conn)
+	defer uc.unregisterConnection(meetingID, userID)
 
-	if err := uc.roomRepo.SetUserOnlineStatus(ctx, roomID, userID, true); err != nil {
+	if err := uc.meetingRepo.SetUserOnlineStatus(ctx, meetingID, userID, true); err != nil {
 		return
 	}
-	defer uc.roomRepo.SetUserOnlineStatus(ctx, roomID, userID, false)
+	defer uc.meetingRepo.SetUserOnlineStatus(ctx, meetingID, userID, false)
 
-	uc.broadcastUserJoined(roomID, userID)
+	uc.broadcastUserJoined(meetingID, userID)
 
 	for {
 		select {
@@ -61,18 +61,18 @@ func (uc *websocketService) HandleConnection(ctx context.Context, conn WSConnect
 				continue
 			}
 
-			uc.handleMessage(ctx, roomID, userID, &wsMsg)
+			uc.handleMessage(ctx, meetingID, userID, &wsMsg)
 		}
 	}
 }
 
-func (uc *websocketService) BroadcastToRoom(roomID string, message *entity.WSMessage) error {
+func (uc *websocketService) BroadcastToMeeting(meetingID string, message *entity.WSMessage) error {
 	uc.mu.RLock()
 	defer uc.mu.RUnlock()
 
-	roomConnections, exists := uc.connections[roomID]
+	meetingConnections, exists := uc.connections[meetingID]
 	if !exists {
-		return fmt.Errorf("room not found: %s", roomID)
+		return fmt.Errorf("meeting not found: %s", meetingID)
 	}
 
 	data, err := json.Marshal(message)
@@ -81,7 +81,7 @@ func (uc *websocketService) BroadcastToRoom(roomID string, message *entity.WSMes
 	}
 
 	var wg sync.WaitGroup
-	for targetUserID, conn := range roomConnections {
+	for targetUserID, conn := range meetingConnections {
 		wg.Add(1)
 		go func(targetUserID string, conn WSConnection) {
 			defer wg.Done()
@@ -93,18 +93,18 @@ func (uc *websocketService) BroadcastToRoom(roomID string, message *entity.WSMes
 	return nil
 }
 
-func (uc *websocketService) SendToUser(roomID, targetUserID string, message *entity.WSMessage) error {
+func (uc *websocketService) SendToUser(meetingID, targetUserID string, message *entity.WSMessage) error {
 	uc.mu.RLock()
 	defer uc.mu.RUnlock()
 
-	roomConnections, exists := uc.connections[roomID]
+	meetingConnections, exists := uc.connections[meetingID]
 	if !exists {
-		return fmt.Errorf("room not found: %s", roomID)
+		return fmt.Errorf("meeting not found: %s", meetingID)
 	}
 
-	conn, exists := roomConnections[targetUserID]
+	conn, exists := meetingConnections[targetUserID]
 	if !exists {
-		return fmt.Errorf("user not found in room: %s", targetUserID)
+		return fmt.Errorf("user not found in meeting: %s", targetUserID)
 	}
 
 	data, err := json.Marshal(message)
@@ -119,18 +119,18 @@ func (uc *websocketService) SendToUser(roomID, targetUserID string, message *ent
 	return nil
 }
 
-func (uc *websocketService) registerConnection(roomID, userID string, conn WSConnection) {
+func (uc *websocketService) registerConnection(meetingID, userID string, conn WSConnection) {
 	uc.mu.Lock()
 	defer uc.mu.Unlock()
 
-	if _, exists := uc.connections[roomID]; !exists {
-		uc.connections[roomID] = make(map[string]WSConnection)
+	if _, exists := uc.connections[meetingID]; !exists {
+		uc.connections[meetingID] = make(map[string]WSConnection)
 	}
 
-	uc.connections[roomID][userID] = conn
+	uc.connections[meetingID][userID] = conn
 }
 
-func (uc *websocketService) unregisterConnection(roomID, userID string) {
+func (uc *websocketService) unregisterConnection(meetingID, userID string) {
 	uc.mu.Lock()
 	defer uc.mu.Unlock()
 
@@ -140,10 +140,10 @@ func (uc *websocketService) unregisterConnection(roomID, userID string) {
 		From: userID,
 	}
 
-	if roomConnections, exists := uc.connections[roomID]; exists {
+	if meetingConnections, exists := uc.connections[meetingID]; exists {
 		data, err := json.Marshal(message)
 		if err == nil {
-			for targetUserID, conn := range roomConnections {
+			for targetUserID, conn := range meetingConnections {
 				if targetUserID != userID {
 					go func(targetUserID string, conn WSConnection) {
 						_ = conn.WriteMessage(1, data)
@@ -152,17 +152,17 @@ func (uc *websocketService) unregisterConnection(roomID, userID string) {
 			}
 		}
 
-		delete(roomConnections, userID)
-		if len(roomConnections) == 0 {
-			delete(uc.connections, roomID)
+		delete(meetingConnections, userID)
+		if len(meetingConnections) == 0 {
+			delete(uc.connections, meetingID)
 		}
 	}
 }
 
-func (uc *websocketService) broadcastUserJoined(roomID, userID string) {
+func (uc *websocketService) broadcastUserJoined(meetingID, userID string) {
 	time.Sleep(uc.userJoinDelay)
 
-	users, err := uc.roomRepo.GetRoomUsers(context.Background(), roomID)
+	users, err := uc.meetingRepo.GetMeetingUsers(context.Background(), meetingID)
 	if err != nil {
 		return
 	}
@@ -184,14 +184,14 @@ func (uc *websocketService) broadcastUserJoined(roomID, userID string) {
 		From: userID,
 	}
 
-	uc.BroadcastToRoom(roomID, message)
+	uc.BroadcastToMeeting(meetingID, message)
 }
 
-func (uc *websocketService) handleMessage(ctx context.Context, roomID, userID string, message *entity.WSMessage) {
+func (uc *websocketService) handleMessage(ctx context.Context, meetingID, userID string, message *entity.WSMessage) {
 	switch message.Type {
 	case "offer":
 		if message.To != "" {
-			uc.SendToUser(roomID, message.To, &entity.WSMessage{
+			uc.SendToUser(meetingID, message.To, &entity.WSMessage{
 				Type: "offer",
 				Data: message.Data,
 				From: userID,
@@ -199,7 +199,7 @@ func (uc *websocketService) handleMessage(ctx context.Context, roomID, userID st
 		}
 	case "answer":
 		if message.To != "" {
-			uc.SendToUser(roomID, message.To, &entity.WSMessage{
+			uc.SendToUser(meetingID, message.To, &entity.WSMessage{
 				Type: "answer",
 				Data: message.Data,
 				From: userID,
@@ -207,14 +207,14 @@ func (uc *websocketService) handleMessage(ctx context.Context, roomID, userID st
 		}
 	case "ice_candidate":
 		if message.To != "" {
-			uc.SendToUser(roomID, message.To, &entity.WSMessage{
+			uc.SendToUser(meetingID, message.To, &entity.WSMessage{
 				Type: "ice_candidate",
 				Data: message.Data,
 				From: userID,
 			})
 		}
 	case "user_left":
-		uc.BroadcastToRoom(roomID, &entity.WSMessage{
+		uc.BroadcastToMeeting(meetingID, &entity.WSMessage{
 			Type: "user_left",
 			Data: map[string]string{"user_id": userID},
 			From: userID,

@@ -4,26 +4,22 @@ import { Meeting } from '@/pages/Meeting/Meeting';
 import type { MeetingData } from '@/types/meeting';
 
 function App() {
-  const [roomData, setRoomData] = useState<MeetingData | null>(null);
+  const [meetingData, setMeetingData] = useState<MeetingData | null>(null);
 
   const handleJoinSuccess = (data: MeetingData) => {
-    setRoomData(data);
+    setMeetingData(data);
   };
 
-  const handleLeaveRoom = () => {
-    setRoomData(null);
+  const handleLeaveMeeting = () => {
+    setMeetingData(null);
   };
 
   return (
     <>
-      {!roomData ? (
-        <JoinMeeting onJoinSuccess={(el) => handleJoinSuccess({
-          roomId: el.meetingId,
-          userId: el.userId,
-          userName: el.userName,
-        })} />
+      {!meetingData ? (
+        <JoinMeeting onJoinSuccess={handleJoinSuccess}/>
       ) : (
-        <Meeting roomData={roomData} onLeaveRoom={handleLeaveRoom} />
+        <Meeting meetingData={meetingData} onLeaveMeeting={handleLeaveMeeting} />
       )}
     </>
   );

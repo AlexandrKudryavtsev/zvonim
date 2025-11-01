@@ -1,13 +1,13 @@
 # Документация для фронтенда
 
-### 1 Создание/вход в комнату
+### 1 Создание/вход в встречу
 
-**POST** `/room/join`
+**POST** `/meeting/join`
 
 **Тело запроса:**
 ```json
 {
-  "room_id": "необязательно", 
+  "meeting_id": "необязательно", 
   "user_name": "Имя пользователя"
 }
 ```
@@ -15,27 +15,27 @@
 **Успешный ответ (200):**
 ```json
 {
-  "room_id": "550e8400-e29b-41d4-a716-446655440000",
+  "meeting_id": "550e8400-e29b-41d4-a716-446655440000",
   "user_id": "550e8400-e29b-41d4-a716-446655440001", 
-  "users_in_room": ["Алиса", "Боб"]
+  "users_in_meeting": ["Алиса", "Боб"]
 }
 ```
 
 **Ошибки:**
 - `400` - неверные данные
-- `404` - комната не найдена (если указан room_id)
+- `404` - встреча не найдена (если указан meeting_id)
 - `500` - внутренняя ошибка сервера
 
 ---
 
-### 2. Получение информации о комнате
+### 2. Получение информации о встрече
 
-**GET** `/room/{room_id}/info`
+**GET** `/meeting/{meeting_id}/info`
 
 **Успешный ответ (200):**
 ```json
 {
-  "room_id": "550e8400-e29b-41d4-a716-446655440000",
+  "meeting_id": "550e8400-e29b-41d4-a716-446655440000",
   "users": [
     {
       "user_id": "id1",
@@ -54,14 +54,14 @@
 
 ---
 
-### 3. Выход из комнаты
+### 3. Выход из встречи
 
-**POST** `/room/leave`
+**POST** `/meeting/leave`
 
 **Тело запроса:**
 ```json
 {
-  "room_id": "id комнаты",
+  "meeting_id": "id встречи",
   "user_id": "id пользователя"
 }
 ```
@@ -74,16 +74,16 @@
 
 ### Подключение к WebSocket
 
-**URL:** `ws://your-domain.com/api/room/{room_id}/ws?user_id={user_id}`
+**URL:** `ws://your-domain.com/api/meeting/{meeting_id}/ws?user_id={user_id}`
 
 **Параметры:**
-- `room_id` - ID комнаты (из пути)
+- `meeting_id` - ID встречи (из пути)
 - `user_id` - ID пользователя (query параметр)
 
 **Пример:**
 ```javascript
 const ws = new WebSocket(
-  `ws://your-domain.com/api/room/room-123/ws?user_id=user-456`
+  `ws://your-domain.com/api/meeting/meeting-123/ws?user_id=user-456`
 );
 ```
 
@@ -117,7 +117,7 @@ interface WSMessage {
 }
 ```
 
-#### **user_left** - пользователь покинул комнату
+#### **user_left** - пользователь покинул встречу
 ```json
 {
   "type": "user_left", 

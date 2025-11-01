@@ -32,9 +32,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/room/join": {
+        "/meeting/join": {
             "post": {
-                "description": "Create a new room or join existing one",
+                "description": "Create a new meeting or join existing one",
                 "consumes": [
                     "application/json"
                 ],
@@ -42,17 +42,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "rooms"
+                    "meetings"
                 ],
-                "summary": "Join or create room",
+                "summary": "Join or create meeting",
                 "parameters": [
                     {
-                        "description": "Join room request",
+                        "description": "Join meeting request",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.JoinRoomRequest"
+                            "$ref": "#/definitions/entity.JoinMeetingRequest"
                         }
                     }
                 ],
@@ -60,7 +60,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.JoinRoomResponse"
+                            "$ref": "#/definitions/entity.JoinMeetingResponse"
                         }
                     },
                     "400": {
@@ -78,9 +78,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/room/leave": {
+        "/meeting/leave": {
             "post": {
-                "description": "Leave the room",
+                "description": "Leave the meeting",
                 "consumes": [
                     "application/json"
                 ],
@@ -88,17 +88,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "rooms"
+                    "meetings"
                 ],
-                "summary": "Leave room",
+                "summary": "Leave meeting",
                 "parameters": [
                     {
-                        "description": "Leave room request",
+                        "description": "Leave meeting request",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.LeaveRoomRequest"
+                            "$ref": "#/definitions/entity.LeaveMeetingRequest"
                         }
                     }
                 ],
@@ -124,21 +124,21 @@ const docTemplate = `{
                 }
             }
         },
-        "/room/{room_id}/info": {
+        "/meeting/{meeting_id}/info": {
             "get": {
-                "description": "Get room information and users list",
+                "description": "Get meeting information and users list",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "rooms"
+                    "meetings"
                 ],
-                "summary": "Get room info",
+                "summary": "Get meeting info",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Room ID",
-                        "name": "room_id",
+                        "description": "Meeting ID",
+                        "name": "meeting_id",
                         "in": "path",
                         "required": true
                     }
@@ -147,7 +147,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Room"
+                            "$ref": "#/definitions/entity.Meeting"
                         }
                     },
                     "400": {
@@ -171,7 +171,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/room/{room_id}/ws": {
+        "/meeting/{meeting_id}/ws": {
             "get": {
                 "description": "WebSocket endpoint для обмена WebRTC сигналами",
                 "tags": [
@@ -181,8 +181,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Room ID",
-                        "name": "room_id",
+                        "description": "Meeting ID",
+                        "name": "meeting_id",
                         "in": "path",
                         "required": true
                     },
@@ -199,10 +199,10 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "entity.JoinRoomRequest": {
+        "entity.JoinMeetingRequest": {
             "type": "object",
             "properties": {
-                "room_id": {
+                "meeting_id": {
                     "type": "string"
                 },
                 "user_name": {
@@ -210,16 +210,16 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.JoinRoomResponse": {
+        "entity.JoinMeetingResponse": {
             "type": "object",
             "properties": {
-                "room_id": {
+                "meeting_id": {
                     "type": "string"
                 },
                 "user_id": {
                     "type": "string"
                 },
-                "users_in_room": {
+                "users_in_meeting": {
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -227,10 +227,10 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.LeaveRoomRequest": {
+        "entity.LeaveMeetingRequest": {
             "type": "object",
             "properties": {
-                "room_id": {
+                "meeting_id": {
                     "type": "string"
                 },
                 "user_id": {
@@ -238,13 +238,16 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.Room": {
+        "entity.Meeting": {
             "type": "object",
             "properties": {
                 "created_at": {
                     "type": "string"
                 },
-                "room_id": {
+                "meeting_id": {
+                    "type": "string"
+                },
+                "meeting_name": {
                     "type": "string"
                 },
                 "users": {

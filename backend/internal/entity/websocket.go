@@ -7,20 +7,20 @@ type WSMessage struct {
 	To   string      `json:"to,omitempty"`
 }
 
-type JoinRoomRequest struct {
-	RoomID   string `json:"room_id"`
-	UserName string `json:"user_name"`
+type JoinMeetingRequest struct {
+	MeetingID string `json:"meeting_id"`
+	UserName  string `json:"user_name"`
 }
 
-type JoinRoomResponse struct {
-	RoomID      string   `json:"room_id"`
-	UserID      string   `json:"user_id"`
-	UsersInRoom []string `json:"users_in_room"`
+type JoinMeetingResponse struct {
+	MeetingID      string   `json:"meeting_id"`
+	UserID         string   `json:"user_id"`
+	UsersInMeeting []string `json:"users_in_meeting"`
 }
 
-type LeaveRoomRequest struct {
-	RoomID string `json:"room_id"`
-	UserID string `json:"user_id"`
+type LeaveMeetingRequest struct {
+	MeetingID string `json:"meeting_id"`
+	UserID    string `json:"user_id"`
 }
 
 // WebRTC сигнальные сообщения

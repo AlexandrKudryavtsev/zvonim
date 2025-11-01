@@ -7,8 +7,9 @@ import (
 	"github.com/google/uuid"
 )
 
-type Room struct {
-	ID        string    `json:"room_id"`
+type Meeting struct {
+	ID        string    `json:"meeting_id"`
+	Name      string    `json:"meeting_name"`
 	Users     []User    `json:"users"`
 	CreatedAt time.Time `json:"created_at"`
 }
@@ -32,6 +33,6 @@ func GenerateUserID() string {
 	return uuid.New().String()
 }
 
-func GenerateRoomID() string {
+func GenerateMeetingID() string {
 	return uuid.New().String()
 }

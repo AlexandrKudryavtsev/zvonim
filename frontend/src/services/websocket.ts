@@ -10,9 +10,9 @@ class WebSocketService {
   private maxReconnectAttempts = 5;
   private isManualClose = false;
 
-  connect(roomId: string, userId: string): Promise<void> {
+  connect(meetingId: string, userId: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      const wsUrl = `${config.websocket.baseUrl}/room/${roomId}/ws?user_id=${userId}`;
+      const wsUrl = `${config.websocket.baseUrl}/meeting/${meetingId}/ws?user_id=${userId}`;
 
       try {
         this.socket = new WebSocket(wsUrl);
@@ -39,7 +39,7 @@ class WebSocketService {
           if (!this.isManualClose && this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
             console.log(`Attempting to reconnect... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
-            setTimeout(() => this.connect(roomId, userId), 3000);
+            setTimeout(() => this.connect(meetingId, userId), 3000);
           }
         };
 

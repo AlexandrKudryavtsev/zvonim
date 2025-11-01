@@ -26,12 +26,12 @@ export const JoinMeeting: React.FC<JoinMeetingProps> = ({ onJoinSuccess }) => {
     try {
       const request = {
         user_name: userName.trim(),
-        ...(meetingId.trim() && { room_id: meetingId.trim() }),
+        ...(meetingId.trim() && { meeting_id: meetingId.trim() }),
       };
 
-      const response = await apiService.joinRoom(request);
+      const response = await apiService.joinMeeting(request);
       onJoinSuccess({
-        meetingId: response.room_id,
+        meetingId: response.meeting_id,
         userId: response.user_id,
         userName: userName.trim(),
       });

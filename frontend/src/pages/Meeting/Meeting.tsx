@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useRoom } from '@/hooks/useRoom';
+import { useMeeting } from '@/hooks/useMeeting';
 import { VideoCall } from '@/components/VideoCall';
 import { Button } from '@/components/ui/Button';
 import { MainLayout } from '@/components/layout/MainLayout';
@@ -8,36 +8,36 @@ import { cn } from '@/utils/classNames';
 import cls from './Meeting.module.scss';
 
 interface MeetingProps {
-  roomData: MeetingData;
-  onLeaveRoom: () => void;
+  meetingData: MeetingData;
+  onLeaveMeeting: () => void;
 }
 
-export const Meeting: React.FC<MeetingProps> = ({ roomData, onLeaveRoom }) => {
+export const Meeting: React.FC<MeetingProps> = ({ meetingData, onLeaveMeeting }) => {
   const {
     users,
     isConnected,
     error,
     callState,
-    leaveRoom,
+    leaveMeeting,
     startCallWithUser,
     initializeLocalMedia,
     stopAllMedia,
-  } = useRoom({
-    roomId: roomData.roomId,
-    userId: roomData.userId,
-    userName: roomData.userName,
-    onUserLeft: onLeaveRoom,
+  } = useMeeting({
+    meetingId: meetingData.meetingId,
+    userId: meetingData.userId,
+    userName: meetingData.userName,
+    onUserLeft: onLeaveMeeting,
   });
 
   const [isInitializingMedia, setIsInitializingMedia] = useState(false);
 
-  const handleLeaveRoom = async () => {
-    await leaveRoom();
-    onLeaveRoom();
+  const handleLeaveMeeting = async () => {
+    await leaveMeeting();
+    onLeaveMeeting();
   };
 
-  const copyRoomId = () => {
-    navigator.clipboard.writeText(roomData.roomId);
+  const copyMeetingId = () => {
+    navigator.clipboard.writeText(meetingData.meetingId);
   };
 
   const handleStartCallWithUser = async (targetUserId: string) => {
@@ -69,16 +69,16 @@ export const Meeting: React.FC<MeetingProps> = ({ roomData, onLeaveRoom }) => {
     <MainLayout>
       <div className={cls.container}>
         <div className={cls.header}>
-          <div className={cls.roomInfo}>
+          <div className={cls.MeetingInfo}>
             <h1 className={cls.title}>Встреча</h1>
-            <div className={cls.roomDetails}>
+            <div className={cls.MeetingDetails}>
               <div className={cls.detailItem}>
                 <span className={cls.detailLabel}>ID встречи:</span>
-                <code className={cls.roomId}>{roomData.roomId}</code>
+                <code className={cls.MeetingId}>{meetingData.meetingId}</code>
                 <Button
                   variant='secondary'
                   size='small'
-                  onClick={copyRoomId}
+                  onClick={copyMeetingId}
                   className={cls.copyButton}
                 >
                   Копировать
@@ -86,7 +86,7 @@ export const Meeting: React.FC<MeetingProps> = ({ roomData, onLeaveRoom }) => {
               </div>
               <div className={cls.detailItem}>
                 <span className={cls.detailLabel}>Ваше имя:</span>
-                <span className={cls.userName}>{roomData.userName}</span>
+                <span className={cls.userName}>{meetingData.userName}</span>
               </div>
             </div>
           </div>
@@ -104,7 +104,7 @@ export const Meeting: React.FC<MeetingProps> = ({ roomData, onLeaveRoom }) => {
 
           <Button
             variant='danger'
-            onClick={handleLeaveRoom}
+            onClick={handleLeaveMeeting}
             className={cls.leaveButton}
           >
             Покинуть встречу
@@ -143,8 +143,8 @@ export const Meeting: React.FC<MeetingProps> = ({ roomData, onLeaveRoom }) => {
         {(callState.hasLocalStream || callState.isInCall) && (
           <div className={cls.videoSection}>
             <VideoCall
-              userId={roomData.userId}
-              userName={roomData.userName}
+              userId={meetingData.userId}
+              userName={meetingData.userName}
             />
           </div>
         )}
@@ -159,13 +159,13 @@ export const Meeting: React.FC<MeetingProps> = ({ roomData, onLeaveRoom }) => {
                 <div
                   key={user.user_id}
                   className={cn(cls.participant, {
-                    [cls.currentUser]: user.user_id === roomData.userId,
+                    [cls.currentUser]: user.user_id === meetingData.userId,
                   })}
                 >
                   <div className={cls.participantInfo}>
                     <span className={cls.participantName}>
                       {user.user_name}
-                      {user.user_id === roomData.userId && <span className={cls.youBadge}>(Вы)</span>}
+                      {user.user_id === meetingData.userId && <span className={cls.youBadge}>(Вы)</span>}
                     </span>
                     {callState.remoteUsers.includes(user.user_id) && (
                       <span className={cls.inCallBadge}>📞 в звонке</span>
@@ -180,7 +180,7 @@ export const Meeting: React.FC<MeetingProps> = ({ roomData, onLeaveRoom }) => {
                       </span>
                     </div>
 
-                    {user.user_id !== roomData.userId && user.is_online && (
+                    {user.user_id !== meetingData.userId && user.is_online && (
                       <Button
                         onClick={() => handleStartCallWithUser(user.user_id)}
                         disabled={isInitializingMedia || !callState.hasLocalStream}

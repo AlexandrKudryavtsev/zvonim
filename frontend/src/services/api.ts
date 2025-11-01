@@ -1,10 +1,10 @@
 import { config } from '@/config';
-import type { JoinRoomRequest, JoinRoomResponse, RoomInfo, LeaveRoomRequest } from '@/types/meeting';
+import type { JoinMeetingRequest, JoinMeetingResponse, MeetingInfo, LeaveMeetingRequest } from '@/types/meeting';
 
 
 class ApiService {
-    async joinRoom(request: JoinRoomRequest): Promise<JoinRoomResponse> {
-        const response = await fetch(`${config.api.baseUrl}/room/join`, {
+    async joinMeeting(request: JoinMeetingRequest): Promise<JoinMeetingResponse> {
+        const response = await fetch(`${config.api.baseUrl}/meeting/join`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -19,8 +19,8 @@ class ApiService {
         return response.json();
     }
 
-    async getRoomInfo(roomId: string): Promise<RoomInfo> {
-        const response = await fetch(`${config.api.baseUrl}/room/${roomId}/info`);
+    async getMeetingInfo(meetingId: string): Promise<MeetingInfo> {
+        const response = await fetch(`${config.api.baseUrl}/meeting/${meetingId}/info`);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -29,8 +29,8 @@ class ApiService {
         return response.json();
     }
 
-    async leaveRoom(request: LeaveRoomRequest): Promise<void> {
-        const response = await fetch(`${config.api.baseUrl}/room/leave`, {
+    async leaveMeeting(request: LeaveMeetingRequest): Promise<void> {
+        const response = await fetch(`${config.api.baseUrl}/meeting/leave`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

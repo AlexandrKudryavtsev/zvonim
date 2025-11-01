@@ -7,28 +7,28 @@ import (
 )
 
 type (
-	// RoomUseCase - управление комнатами и пользователями
-	RoomUseCase interface {
-		JoinRoom(ctx context.Context, req *entity.JoinRoomRequest) (*entity.JoinRoomResponse, error)
-		GetRoomInfo(ctx context.Context, roomID string) (*entity.Room, error)
-		LeaveRoom(ctx context.Context, req *entity.LeaveRoomRequest) error
-		GetOnlineUsers(ctx context.Context, roomID string) ([]string, error)
+	// MeetingUseCase - управление встречами и пользователями
+	MeetingUseCase interface {
+		JoinMeeting(ctx context.Context, req *entity.JoinMeetingRequest) (*entity.JoinMeetingResponse, error)
+		GetMeetingInfo(ctx context.Context, meetingID string) (*entity.Meeting, error)
+		LeaveMeeting(ctx context.Context, req *entity.LeaveMeetingRequest) error
+		GetOnlineUsers(ctx context.Context, meetingID string) ([]string, error)
 	}
 
 	// WebSocketUseCase - управление WebSocket соединениями и сообщениями
 	WebSocketUseCase interface {
-		HandleConnection(ctx context.Context, conn WSConnection, roomID, userID string)
-		BroadcastToRoom(roomID string, message *entity.WSMessage) error
-		SendToUser(roomID, userID string, message *entity.WSMessage) error
+		HandleConnection(ctx context.Context, conn WSConnection, meetingID, userID string)
+		BroadcastToMeeting(meetingID string, message *entity.WSMessage) error
+		SendToUser(meetingID, userID string, message *entity.WSMessage) error
 	}
 
-	RoomRepo interface {
-		CreateRoom(ctx context.Context, room *entity.Room) error
-		GetRoom(ctx context.Context, roomID string) (*entity.Room, error)
-		AddUserToRoom(ctx context.Context, roomID string, user *entity.User) error
-		RemoveUserFromRoom(ctx context.Context, roomID, userID string) error
-		SetUserOnlineStatus(ctx context.Context, roomID, userID string, online bool) error
-		GetRoomUsers(ctx context.Context, roomID string) ([]entity.User, error)
+	MeetingRepo interface {
+		CreateMeeting(ctx context.Context, meeting *entity.Meeting) error
+		GetMeeting(ctx context.Context, meetingID string) (*entity.Meeting, error)
+		AddUserToMeeting(ctx context.Context, meetingID string, user *entity.User) error
+		RemoveUserFromMeeting(ctx context.Context, meetingID, userID string) error
+		SetUserOnlineStatus(ctx context.Context, meetingID, userID string, online bool) error
+		GetMeetingUsers(ctx context.Context, meetingID string) ([]entity.User, error)
 	}
 
 	WSConnection interface {

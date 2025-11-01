@@ -32,15 +32,15 @@ func newWSHandler(wsUC usecase.WebSocketUseCase, logger logger.Interface) *WSHan
 // @Summary     WebSocket для сигналинга
 // @Description WebSocket endpoint для обмена WebRTC сигналами
 // @Tags        websocket
-// @Param       room_id path string true "Room ID"
+// @Param       meeting_id path string true "Meeting ID"
 // @Param       user_id query string true "User ID"
-// @Router      /room/{room_id}/ws [get]
+// @Router      /meeting/{meeting_id}/ws [get]
 func (h *WSHandler) HandleWebSocket(c *gin.Context) {
-	roomID := c.Param("room_id")
+	meetingID := c.Param("meeting_id")
 	userID := c.Query("user_id")
 
-	if roomID == "" || userID == "" {
-		errorResponse(c, http.StatusBadRequest, "room_id and user_id are required")
+	if meetingID == "" || userID == "" {
+		errorResponse(c, http.StatusBadRequest, "meeting_id and user_id are required")
 		return
 	}
 
@@ -51,11 +51,11 @@ func (h *WSHandler) HandleWebSocket(c *gin.Context) {
 		return
 	}
 
-	h.logger.Info("websocket connection established", "room_id", roomID, "user_id", userID)
+	h.logger.Info("websocket connection established", "meeting_id", meetingID, "user_id", userID)
 
 	ctx := context.Background()
 
 	wsConn := newWSConnection(conn)
 
-	go h.wsUC.HandleConnection(ctx, wsConn, roomID, userID)
+	go h.wsUC.HandleConnection(ctx, wsConn, meetingID, userID)
 }

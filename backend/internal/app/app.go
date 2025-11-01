@@ -24,16 +24,16 @@ func Run(cfg *config.Config) {
 	handler := gin.New()
 	handler.Use(gin.Recovery())
 
-	roomRepo := repo.NewMemoryRoomRepository()
-	log.Info("Room repository initialized")
+	meetingRepo := repo.NewMemoryMeetingRepository()
+	log.Info("Meeting repository initialized")
 
-	roomUC := usecase.NewRoomService(roomRepo)
-	log.Info("Room service initialized")
+	meetingUC := usecase.NewMeetingService(meetingRepo)
+	log.Info("Meeting service initialized")
 
-	wsUC := usecase.NewWebSocketService(roomRepo, cfg.WS.UserJoinDelay)
+	wsUC := usecase.NewWebSocketService(meetingRepo, cfg.WS.UserJoinDelay)
 	log.Info("WebSocket service initialized")
 
-	v1.NewRouter(handler, log, roomUC, wsUC)
+	v1.NewRouter(handler, log, meetingUC, wsUC)
 	log.Info("HTTP routes registered")
 
 	httpServer := httpserver.New(handler, httpserver.Port(cfg.HTTP.Port))

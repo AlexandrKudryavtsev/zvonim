@@ -9,31 +9,31 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type RoomHandler struct {
-	roomUC usecase.RoomUseCase
-	logger logger.Interface
+type MeetingHandler struct {
+	meetingUC usecase.MeetingUseCase
+	logger    logger.Interface
 }
 
-func newRoomHandler(roomUC usecase.RoomUseCase, logger logger.Interface) *RoomHandler {
-	return &RoomHandler{
-		roomUC: roomUC,
-		logger: logger,
+func newMeetingHandler(meetingUC usecase.MeetingUseCase, logger logger.Interface) *MeetingHandler {
+	return &MeetingHandler{
+		meetingUC: meetingUC,
+		logger:    logger,
 	}
 }
 
-// JoinRoom создает комнату или присоединяет к существующей
-// @Summary     Join or create room
-// @Description Create a new room or join existing one
-// @Tags        rooms
+// JoinMeeting создает встречу или присоединяет к существующей
+// @Summary     Join or create meeting
+// @Description Create a new meeting or join existing one
+// @Tags        meetings
 // @Accept      json
 // @Produce     json
-// @Param       request body entity.JoinRoomRequest true "Join room request"
-// @Success     200 {object} entity.JoinRoomResponse
+// @Param       request body entity.JoinMeetingRequest true "Join meeting request"
+// @Success     200 {object} entity.JoinMeetingResponse
 // @Failure     400 {object} response
 // @Failure     500 {object} response
-// @Router      /room/join [post]
-func (h *RoomHandler) JoinRoom(c *gin.Context) {
-	var req entity.JoinRoomRequest
+// @Router      /meeting/join [post]
+func (h *MeetingHandler) JoinMeeting(c *gin.Context) {
+	var req entity.JoinMeetingRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		h.logger.Error("invalid request body", "error", err)
 		errorResponse(c, http.StatusBadRequest, "invalid request body")
@@ -45,77 +45,77 @@ func (h *RoomHandler) JoinRoom(c *gin.Context) {
 		return
 	}
 
-	resp, err := h.roomUC.JoinRoom(c.Request.Context(), &req)
+	resp, err := h.meetingUC.JoinMeeting(c.Request.Context(), &req)
 	if err != nil {
-		h.logger.Error("failed to join room", "error", err)
-		errorResponse(c, http.StatusInternalServerError, "failed to join room")
+		h.logger.Error("failed to join meeting", "error", err)
+		errorResponse(c, http.StatusInternalServerError, "failed to join meeting")
 		return
 	}
 
 	c.JSON(http.StatusOK, resp)
 }
 
-// GetRoomInfo возвращает информацию о комнате
-// @Summary     Get room info
-// @Description Get room information and users list
-// @Tags        rooms
+// GetMeetingInfo возвращает информацию о встречи
+// @Summary     Get meeting info
+// @Description Get meeting information and users list
+// @Tags        meetings
 // @Produce     json
-// @Param       room_id path string true "Room ID"
-// @Success     200 {object} entity.Room
+// @Param       meeting_id path string true "Meeting ID"
+// @Success     200 {object} entity.Meeting
 // @Failure     400 {object} response
 // @Failure     404 {object} response
 // @Failure     500 {object} response
-// @Router      /room/{room_id}/info [get]
-func (h *RoomHandler) GetRoomInfo(c *gin.Context) {
-	roomID := c.Param("room_id")
-	if roomID == "" {
-		errorResponse(c, http.StatusBadRequest, "room_id is required")
+// @Router      /meeting/{meeting_id}/info [get]
+func (h *MeetingHandler) GetMeetingInfo(c *gin.Context) {
+	meetingID := c.Param("meeting_id")
+	if meetingID == "" {
+		errorResponse(c, http.StatusBadRequest, "meeting_id is required")
 		return
 	}
 
-	room, err := h.roomUC.GetRoomInfo(c.Request.Context(), roomID)
+	meeting, err := h.meetingUC.GetMeetingInfo(c.Request.Context(), meetingID)
 	if err != nil {
-		h.logger.Error("failed to get room info", "room_id", roomID, "error", err)
-		errorResponse(c, http.StatusInternalServerError, "failed to get room info")
+		h.logger.Error("failed to get meeting info", "meeting_id", meetingID, "error", err)
+		errorResponse(c, http.StatusInternalServerError, "failed to get meeting info")
 		return
 	}
 
-	if room == nil {
-		errorResponse(c, http.StatusNotFound, "room not found")
+	if meeting == nil {
+		errorResponse(c, http.StatusNotFound, "meeting not found")
 		return
 	}
 
-	c.JSON(http.StatusOK, room)
+	c.JSON(http.StatusOK, meeting)
 }
 
-// LeaveRoom покинуть комнату
-// @Summary     Leave room
-// @Description Leave the room
-// @Tags        rooms
+// LeaveMeeting покинуть встречу
+// @Summary     Leave meeting
+// @Description Leave the meeting
+// @Tags        meetings
 // @Accept      json
 // @Produce     json
-// @Param       request body entity.LeaveRoomRequest true "Leave room request"
+// @Param       request body entity.LeaveMeetingRequest true "Leave meeting request"
 // @Success     200 {object} response
 // @Failure     400 {object} response
 // @Failure     500 {object} response
-// @Router      /room/leave [post]
-func (h *RoomHandler) LeaveRoom(c *gin.Context) {
-	var req entity.LeaveRoomRequest
+// @Router      /meeting/leave [post]
+func (h *MeetingHandler) LeaveMeeting(c *gin.Context) {
+	var req entity.LeaveMeetingRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		h.logger.Error("invalid request body", "error", err)
 		errorResponse(c, http.StatusBadRequest, "invalid request body")
 		return
 	}
 
-	if req.RoomID == "" || req.UserID == "" {
-		errorResponse(c, http.StatusBadRequest, "room_id and user_id are required")
+	if req.MeetingID == "" || req.UserID == "" {
+		errorResponse(c, http.StatusBadRequest, "meeting_id and user_id are required")
 		return
 	}
 
-	err := h.roomUC.LeaveRoom(c.Request.Context(), &req)
+	err := h.meetingUC.LeaveMeeting(c.Request.Context(), &req)
 	if err != nil {
-		h.logger.Error("failed to leave room", "room_id", req.RoomID, "user_id", req.UserID, "error", err)
-		errorResponse(c, http.StatusInternalServerError, "failed to leave room")
+		h.logger.Error("failed to leave meeting", "meeting_id", req.MeetingID, "user_id", req.UserID, "error", err)
+		errorResponse(c, http.StatusInternalServerError, "failed to leave meeting")
 		return
 	}
 

@@ -15,14 +15,14 @@ import { webRTCService } from '@/services/webrtc';
 import type { CallState } from '@/types/webrtc';
 import { config } from '@/config';
 
-interface UseRoomProps {
-  roomId: string;
+interface UseMeetingProps {
+  meetingId: string;
   userId: string;
   userName: string;
   onUserLeft?: () => void;
 }
 
-export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
+export const useMeeting = ({ meetingId, userId, onUserLeft }: UseMeetingProps) => {
   const [users, setUsers] = useState<UserInfo[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState('');
@@ -32,14 +32,14 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
     remoteUsers: [],
   });
 
-  const loadRoomInfo = useCallback(async () => {
+  const loadMeetingInfo = useCallback(async () => {
     try {
-      const roomInfo = await apiService.getRoomInfo(roomId);
-      setUsers(roomInfo.users);
+      const MeetingInfo = await apiService.getMeetingInfo(meetingId);
+      setUsers(MeetingInfo.users);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка загрузки информации о комнате');
+      setError(err instanceof Error ? err.message : 'Ошибка загрузки информации о встречи');
     }
-  }, [roomId]);
+  }, [meetingId]);
 
   const initializeWebRTC = useCallback(async () => {
     try {
@@ -178,7 +178,7 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
 
   const connectWebSocket = useCallback(async () => {
     try {
-      await webSocketService.connect(roomId, userId);
+      await webSocketService.connect(meetingId, userId);
       setIsConnected(true);
       setError('');
 
@@ -187,7 +187,7 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
       setError(err instanceof Error ? err.message : 'Ошибка подключения WebSocket');
       setIsConnected(false);
     }
-  }, [roomId, userId, handleWebSocketMessage]);
+  }, [meetingId, userId, handleWebSocketMessage]);
 
   const disconnectWebSocket = useCallback(() => {
     webSocketService.removeMessageHandler(handleWebSocketMessage);
@@ -195,29 +195,29 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
     setIsConnected(false);
   }, [handleWebSocketMessage]);
 
-  const leaveRoom = useCallback(async () => {
+  const leaveMeeting = useCallback(async () => {
     try {
-      console.log('Leaving room...');
+      console.log('Leaving Meeting...');
 
       if (onUserLeft) {
         console.log('Calling onUserLeft callback');
         onUserLeft();
       }
 
-      await apiService.leaveRoom({
-        room_id: roomId,
+      await apiService.leaveMeeting({
+        meeting_id: meetingId,
         user_id: userId,
       });
       console.log('API leave request completed');
 
     } catch (err) {
-      console.error('Ошибка при выходе из комнаты:', err);
+      console.error('Ошибка при выходе из встречи:', err);
     } finally {
       console.log('Cleaning up local state...');
       stopAllMedia();
       disconnectWebSocket();
     }
-  }, [roomId, userId, disconnectWebSocket, stopAllMedia, onUserLeft]);
+  }, [meetingId, userId, disconnectWebSocket, stopAllMedia, onUserLeft]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -225,12 +225,12 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
       if (navigator.sendBeacon) {
         const data = new Blob([
           JSON.stringify({
-            room_id: roomId,
+            meeting_id: meetingId,
             user_id: userId,
           }),
         ], { type: 'application/json' });
 
-        navigator.sendBeacon(`${config.api.baseUrl}/room/leave`, data);
+        navigator.sendBeacon(`${config.api.baseUrl}/meeting/leave`, data);
       }
     };
 
@@ -239,7 +239,7 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [roomId, userId, stopAllMedia]);
+  }, [meetingId, userId, stopAllMedia]);
 
   useEffect(() => {
     let isMounted = true;
@@ -248,13 +248,13 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
       if (!isMounted) return;
 
       try {
-        await loadRoomInfo();
+        await loadMeetingInfo();
         await initializeWebRTC();
         await connectWebSocket();
       } catch (err) {
         if (isMounted) {
           console.error('Initialization error:', err);
-          setError('Ошибка инициализации комнаты');
+          setError('Ошибка инициализации встречи');
         }
       }
     };
@@ -266,15 +266,15 @@ export const useRoom = ({ roomId, userId, onUserLeft }: UseRoomProps) => {
       stopAllMedia();
       disconnectWebSocket();
     };
-  }, [loadRoomInfo, connectWebSocket, disconnectWebSocket, initializeWebRTC, stopAllMedia]);
+  }, [loadMeetingInfo, connectWebSocket, disconnectWebSocket, initializeWebRTC, stopAllMedia]);
 
   return {
     users,
     isConnected,
     error,
     callState,
-    loadRoomInfo,
-    leaveRoom,
+    loadMeetingInfo,
+    leaveMeeting,
     startCallWithUser,
     initializeLocalMedia,
     stopAllMedia,
