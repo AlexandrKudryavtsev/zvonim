@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { apiService } from '../services/api';
-import { MainLayout } from './layout/MainLayout';
-import { Button } from './ui/Button';
+import { apiService } from '@/services/api';
+import { MainLayout } from '@/components/layout/MainLayout';
+import { Button } from '@/components/ui/Button';
 import cls from './JoinRoomForm.module.scss';
 
 interface JoinRoomFormProps {

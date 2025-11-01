@@ -1,5 +1,5 @@
-import { config } from '../config';
-import type { RTCPeerConnectionWithUser, MediaStreams, CallState } from '../types/webrtc';
+import { config } from '@/config';
+import type { RTCPeerConnectionWithUser, MediaStreams, CallState } from '@/types/webrtc';
 
 class WebRTCService {
     private peerConnections = new Map<string, RTCPeerConnectionWithUser>();

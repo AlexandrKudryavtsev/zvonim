@@ -1,4 +1,4 @@
-import type { JoinRoomRequest, JoinRoomResponse, RoomInfo, LeaveRoomRequest } from '../types/room';
+import type { JoinRoomRequest, JoinRoomResponse, RoomInfo, LeaveRoomRequest } from '@/types/room';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 

@@ -1,5 +1,5 @@
-import { config } from '../config';
-import type { WSMessage } from '../types/websocket';
+import { config } from '@/config';
+import type { WSMessage } from '@/types/websocket';
 
 type MessageHandler = (message: WSMessage) => void;
 

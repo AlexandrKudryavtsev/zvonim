@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '../../../utils/classNames';
+import { cn } from '@/utils/classNames';
 import cls from './MainLayout.module.scss';
 
 interface MainLayoutProps {

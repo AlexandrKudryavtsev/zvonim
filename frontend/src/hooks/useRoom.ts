@@ -1,12 +1,19 @@
 /* eslint-disable no-case-declarations */
 import { useState, useEffect, useCallback } from 'react';
-import type { UserInfo } from '../types/room';
-import type { WSMessage, UserJoinedMessage, UserLeftMessage, OfferMessage, AnswerMessage, IceCandidateMessage } from '../types/websocket';
-import { apiService } from '../services/api';
-import { webSocketService } from '../services/websocket';
-import { webRTCService } from '../services/webrtc';
-import type { CallState } from '../types/webrtc';
-import { config } from '../config';
+import type { UserInfo } from '@/types/room';
+import type {
+  WSMessage,
+  UserJoinedMessage,
+  UserLeftMessage,
+  OfferMessage,
+  AnswerMessage,
+  IceCandidateMessage,
+} from '@/types/websocket';
+import { apiService } from '@/services/api';
+import { webSocketService } from '@/services/websocket';
+import { webRTCService } from '@/services/webrtc';
+import type { CallState } from '@/types/webrtc';
+import { config } from '@/config';
 
 interface UseRoomProps {
   roomId: string;

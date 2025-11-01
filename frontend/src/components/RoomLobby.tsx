@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { RoomData } from '../App';
-import { useRoom } from '../hooks/useRoom';
+import { useRoom } from '@/hooks/useRoom';
 import { VideoCall } from './VideoCall';
 
 interface RoomLobbyProps {

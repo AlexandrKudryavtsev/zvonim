@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { webRTCService } from '../services/webrtc';
+import { webRTCService } from '@/services/webrtc';
 
 interface VideoCallProps {
   userId: string;

@@ -1,6 +1,6 @@
 import React from 'react';
 import cls from './Button.module.scss';
-import { cn } from '../../../utils/classNames';
+import { cn } from '@/utils/classNames';
 
 interface ButtonProps {
     children: React.ReactNode;

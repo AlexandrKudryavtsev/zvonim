@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { apiService } from '../../services/api';
-import { Button } from '../../components/ui/Button/Button';
-import { TextInput } from '../../components/ui/TextInput';
-import { MainLayout } from '../../components/layout/MainLayout';
+import { apiService } from '@/services/api';
+import { Button } from '@/components/ui/Button/Button';
+import { TextInput } from '@/components/ui/TextInput';
+import { MainLayout } from '@/components/layout/MainLayout';
 
 import cls from './JoinMeeting.module.scss';
 
