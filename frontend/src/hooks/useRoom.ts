@@ -1,6 +1,6 @@
 /* eslint-disable no-case-declarations */
 import { useState, useEffect, useCallback } from 'react';
-import type { UserInfo } from '@/types/room';
+import type { UserInfo } from '@/types/meeting';
 import type {
   WSMessage,
   UserJoinedMessage,

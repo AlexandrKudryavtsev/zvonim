@@ -1,10 +1,10 @@
-import type { JoinRoomRequest, JoinRoomResponse, RoomInfo, LeaveRoomRequest } from '@/types/room';
+import { config } from '@/config';
+import type { JoinRoomRequest, JoinRoomResponse, RoomInfo, LeaveRoomRequest } from '@/types/meeting';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
 class ApiService {
     async joinRoom(request: JoinRoomRequest): Promise<JoinRoomResponse> {
-        const response = await fetch(`${API_BASE_URL}/room/join`, {
+        const response = await fetch(`${config.api.baseUrl}/room/join`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ class ApiService {
     }
 
     async getRoomInfo(roomId: string): Promise<RoomInfo> {
-        const response = await fetch(`${API_BASE_URL}/room/${roomId}/info`);
+        const response = await fetch(`${config.api.baseUrl}/room/${roomId}/info`);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -30,7 +30,7 @@ class ApiService {
     }
 
     async leaveRoom(request: LeaveRoomRequest): Promise<void> {
-        const response = await fetch(`${API_BASE_URL}/room/leave`, {
+        const response = await fetch(`${config.api.baseUrl}/room/leave`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

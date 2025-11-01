@@ -1,3 +1,9 @@
+export interface MeetingData {
+  roomId: string;
+  userId: string;
+  userName: string;
+}
+
 export interface JoinRoomRequest {
     room_id?: string;
     user_name: string;

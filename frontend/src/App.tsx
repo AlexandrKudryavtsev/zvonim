@@ -1,17 +1,12 @@
 import { useState } from 'react';
-import { RoomLobby } from './components/RoomLobby';
-import { JoinMeeting } from './pages/JoinMeeting';
-
-export interface RoomData {
-  roomId: string;
-  userId: string;
-  userName: string;
-}
+import { JoinMeeting } from '@/pages/JoinMeeting';
+import { Meeting } from '@/pages/Meeting/Meeting';
+import type { MeetingData } from '@/types/meeting';
 
 function App() {
-  const [roomData, setRoomData] = useState<RoomData | null>(null);
+  const [roomData, setRoomData] = useState<MeetingData | null>(null);
 
-  const handleJoinSuccess = (data: RoomData) => {
+  const handleJoinSuccess = (data: MeetingData) => {
     setRoomData(data);
   };
 
@@ -28,7 +23,7 @@ function App() {
           userName: el.userName,
         })} />
       ) : (
-        <RoomLobby roomData={roomData} onLeaveRoom={handleLeaveRoom} />
+        <Meeting roomData={roomData} onLeaveRoom={handleLeaveRoom} />
       )}
     </>
   );
