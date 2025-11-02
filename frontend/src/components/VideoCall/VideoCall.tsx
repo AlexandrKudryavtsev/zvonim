@@ -39,8 +39,6 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
     };
 
     const handleRemoteStreamRemoved = (remoteUserId: string) => {
-      console.log('Remote stream removed for user:', remoteUserId);
-
       const videoElement = remoteVideosRef.current.get(remoteUserId);
       if (videoElement) {
         videoElement.srcObject = null;
@@ -81,7 +79,8 @@ export const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
         localVideoRef.current.srcObject = null;
       }
     };
-  }, [remoteStreams]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggleVideo = () => {
     const newState = !isVideoEnabled;
