@@ -33,6 +33,7 @@ func (uc *meetingService) JoinMeeting(ctx context.Context, req *entity.JoinMeeti
 		meetingID = entity.GenerateMeetingID()
 		meeting = &entity.Meeting{
 			ID:        meetingID,
+			Name:      "Untitled Meeting",
 			CreatedAt: time.Now(),
 			Users:     []entity.User{},
 		}
@@ -73,6 +74,7 @@ func (uc *meetingService) JoinMeeting(ctx context.Context, req *entity.JoinMeeti
 
 	response := &entity.JoinMeetingResponse{
 		MeetingID:      meetingID,
+		MeetingName:    meeting.Name,
 		UserID:         user.ID,
 		UsersInMeeting: userNames,
 	}

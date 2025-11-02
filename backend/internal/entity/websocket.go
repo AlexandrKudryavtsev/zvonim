@@ -14,6 +14,7 @@ type JoinMeetingRequest struct {
 
 type JoinMeetingResponse struct {
 	MeetingID      string   `json:"meeting_id"`
+	MeetingName    string   `json:"meeting_name"`
 	UserID         string   `json:"user_id"`
 	UsersInMeeting []string `json:"users_in_meeting"`
 }

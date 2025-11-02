@@ -41,6 +41,7 @@ export const JoinMeeting: React.FC = () => {
 
       joinMeeting({
         meetingId: response.meeting_id,
+        meetingName: response.meeting_name,
         userId: response.user_id,
         userName: userName.trim(),
       });

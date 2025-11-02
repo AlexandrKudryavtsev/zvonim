@@ -119,6 +119,7 @@ func (r *MemoryMeetingRepository) GetMeetingUsers(ctx context.Context, meetingID
 func (r *MemoryMeetingRepository) copyMeeting(meeting *entity.Meeting) *entity.Meeting {
 	copiedMeeting := &entity.Meeting{
 		ID:        meeting.ID,
+		Name:      meeting.Name,
 		CreatedAt: meeting.CreatedAt,
 		Users:     make([]entity.User, len(meeting.Users)),
 	}
