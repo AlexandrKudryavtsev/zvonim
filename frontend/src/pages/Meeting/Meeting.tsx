@@ -8,6 +8,7 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { useMeetingStore } from '@/stores';
 import type { MeetingData } from '@/types/meeting';
 import { cn } from '@/utils/classNames';
+import { getShareableLink } from '@/utils/urlHelper';
 import cls from './Meeting.module.scss';
 
 interface MeetingProps {
@@ -43,9 +44,9 @@ export const Meeting: React.FC<MeetingProps> = ({ meetingData, onLeaveMeeting })
   };
 
   const handleInvite = () => {
-    navigator.clipboard.writeText(meetingData.meetingId);
+    navigator.clipboard.writeText(getShareableLink(meetingData.meetingId));
     // TODO: добавить toast уведомление
-    alert(`ID встречи скопирован: ${meetingData.meetingId}`);
+    alert('Ссылку на встречу скопирована');
   };
 
   const handleStartCallWithUser = async (targetUserId: string) => {
