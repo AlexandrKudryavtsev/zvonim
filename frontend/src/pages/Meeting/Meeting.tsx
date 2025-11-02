@@ -3,6 +3,7 @@ import { useMeeting } from '@/hooks/useMeeting';
 import { VideoCall } from '@/components/VideoCall';
 import { Button } from '@/components/ui/Button';
 import { MainLayout } from '@/components/layout/MainLayout';
+import { useMeetingStore } from '@/stores';
 import type { MeetingData } from '@/types/meeting';
 import { cn } from '@/utils/classNames';
 import cls from './Meeting.module.scss';
@@ -13,6 +14,9 @@ interface MeetingProps {
 }
 
 export const Meeting: React.FC<MeetingProps> = ({ meetingData, onLeaveMeeting }) => {
+  const updateUsers = useMeetingStore((state) => state.updateUsers);
+  const updateCallState = useMeetingStore((state) => state.updateCallState);
+
   const {
     users,
     isConnected,
@@ -27,6 +31,8 @@ export const Meeting: React.FC<MeetingProps> = ({ meetingData, onLeaveMeeting })
     userId: meetingData.userId,
     userName: meetingData.userName,
     onUserLeft: onLeaveMeeting,
+    onUsersUpdate: updateUsers,
+    onCallStateUpdate: updateCallState,
   });
 
   const [isInitializingMedia, setIsInitializingMedia] = useState(false);

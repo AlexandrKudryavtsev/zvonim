@@ -1,3 +1,13 @@
+export interface MeetingState {
+  meetingData: MeetingData | null;
+  users: UserInfo[];
+  callState: {
+    isInCall: boolean;
+    hasLocalStream: boolean;
+    remoteUsers: string[];
+  };
+}
+
 export interface MeetingData {
   meetingId: string;
   userId: string;

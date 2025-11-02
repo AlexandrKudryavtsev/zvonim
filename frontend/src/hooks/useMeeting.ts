@@ -20,9 +20,18 @@ interface UseMeetingProps {
   userId: string;
   userName: string;
   onUserLeft?: () => void;
+  onUsersUpdate?: (users: UserInfo[]) => void;
+  onCallStateUpdate?: (state: Partial<CallState>) => void;
 }
 
-export const useMeeting = ({ meetingId, userId, onUserLeft }: UseMeetingProps) => {
+export const useMeeting = ({
+  meetingId,
+  userId,
+  userName,
+  onUserLeft,
+  onUsersUpdate,
+  onCallStateUpdate,
+}: UseMeetingProps) => {
   const [users, setUsers] = useState<UserInfo[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState('');
@@ -34,12 +43,15 @@ export const useMeeting = ({ meetingId, userId, onUserLeft }: UseMeetingProps) =
 
   const loadMeetingInfo = useCallback(async () => {
     try {
-      const MeetingInfo = await apiService.getMeetingInfo(meetingId);
-      setUsers(MeetingInfo.users);
+      const meetingInfo = await apiService.getMeetingInfo(meetingId);
+      setUsers(meetingInfo.users);
+      if (onUsersUpdate) {
+        onUsersUpdate(meetingInfo.users);
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка загрузки информации о встречи');
+      setError(err instanceof Error ? err.message : 'Ошибка загрузки информации о встрече');
     }
-  }, [meetingId]);
+  }, [meetingId, onUsersUpdate]);
 
   const initializeWebRTC = useCallback(async () => {
     try {
@@ -57,12 +69,15 @@ export const useMeeting = ({ meetingId, userId, onUserLeft }: UseMeetingProps) =
 
       webRTCService.onCallStateChange((state) => {
         setCallState(state);
+        if (onCallStateUpdate) {
+          onCallStateUpdate(state);
+        }
       });
 
     } catch (err) {
       console.error('WebRTC initialization error:', err);
     }
-  }, []);
+  }, [onCallStateUpdate]);
 
   const handleWebRTCSignaling = useCallback(async (message: WSMessage) => {
     try {
@@ -107,11 +122,15 @@ export const useMeeting = ({ meetingId, userId, onUserLeft }: UseMeetingProps) =
           if (prev.find((user) => user.user_id === joinMessage.data.user_id)) {
             return prev;
           }
-          return [...prev, {
+          const updatedUsers = [...prev, {
             user_id: joinMessage.data.user_id,
             user_name: joinMessage.data.user_name,
             is_online: true,
           }];
+          if (onUsersUpdate) {
+            onUsersUpdate(updatedUsers);
+          }
+          return updatedUsers;
         });
         break;
 
@@ -129,7 +148,13 @@ export const useMeeting = ({ meetingId, userId, onUserLeft }: UseMeetingProps) =
 
         (webRTCService as any).notifyCallStateChange();
 
-        setUsers((prev) => prev.filter((user) => user.user_id !== leftMessage.data.user_id));
+        setUsers((prev) => {
+          const updatedUsers = prev.filter((user) => user.user_id !== leftMessage.data.user_id);
+          if (onUsersUpdate) {
+            onUsersUpdate(updatedUsers);
+          }
+          return updatedUsers;
+        });
         break;
 
       case 'offer':
@@ -141,7 +166,7 @@ export const useMeeting = ({ meetingId, userId, onUserLeft }: UseMeetingProps) =
       default:
         console.log('Unhandled message type:', message.type);
     }
-  }, [handleWebRTCSignaling]);
+  }, [handleWebRTCSignaling, onUsersUpdate]);
 
   const startCallWithUser = useCallback(async (targetUserId: string) => {
     try {
