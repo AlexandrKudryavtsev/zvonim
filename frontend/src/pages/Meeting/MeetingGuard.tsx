@@ -4,7 +4,7 @@ import { Meeting } from './Meeting';
 import { useMeetingStore } from '@/stores';
 import { MainLayout } from '@/components/layout/MainLayout';
 
-export const MeetingPage: React.FC = () => {
+export const MeetingGuard: React.FC = () => {
   const { meetingId } = useParams<{ meetingId: string }>();
   const navigate = useNavigate();
   const meetingData = useMeetingStore((state) => state.meetingData);

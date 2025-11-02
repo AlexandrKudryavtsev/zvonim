@@ -1,7 +1,5 @@
 .container {
-  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -10,28 +8,55 @@
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
-  padding: 24px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  align-items: center;
+  gap: 24px;
+  padding: 12px 6px;
+  border-bottom: 2px solid #7D91AA;
 
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
+    align-items: stretch;
   }
 }
 
-.meetingInfo {
+.headerMain {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   flex: 1;
 }
 
 .title {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 600;
   color: var(--primary-color);
-  margin-bottom: 16px;
+  margin: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.leaveButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+
+  .leaveIcon {
+    width: 7px;
+    height: 11px;
+  }
+}
+
+.inviteButton {
+  white-space: nowrap;
+}
+
+.meetingInfo {
+  flex: 1;
 }
 
 .meetingDetails {
@@ -100,10 +125,6 @@
   &.connected {
     background: #28a745;
   }
-}
-
-.leaveButton {
-  white-space: nowrap;
 }
 
 .error {
@@ -220,51 +241,4 @@
 .statusText {
   font-size: 14px;
   color: var(--secondary-color);
-}
-
-.statusInfo {
-  padding: 24px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-
-  h3 {
-    margin-bottom: 16px;
-    color: var(--primary-color);
-  }
-}
-
-.statusList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-
-.statusItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.statusIcon {
-  font-size: 16px;
-}
-
-.callStatus {
-  h4 {
-    margin-bottom: 12px;
-    color: var(--primary-color);
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  li {
-    padding: 4px 0;
-    color: var(--secondary-color);
-  }
 }

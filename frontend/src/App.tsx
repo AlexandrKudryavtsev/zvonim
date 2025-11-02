@@ -1,13 +1,12 @@
 import { Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 import { JoinMeeting } from '@/pages/JoinMeeting';
-import { MeetingPage } from '@/pages/Meeting/MeetingPage';
+import { Meeting } from '@/pages/Meeting';
 import { useMeetingStore } from '@/stores';
 
 function App() {
   const [searchParams] = useSearchParams();
   const meetingData = useMeetingStore((state) => state.meetingData);
 
-  // Автоматический редирект если есть meetingData в localStorage
   const shouldRedirectToMeeting = meetingData && !searchParams.get('meeting');
 
   return (
@@ -16,7 +15,7 @@ function App() {
         <Navigate to={`/meeting/${meetingData.meetingId}`} replace /> :
         <JoinMeeting />
       } />
-      <Route path='/meeting/:meetingId' element={<MeetingPage />} />
+      <Route path='/meeting/:meetingId' element={<Meeting />} />
       <Route path='*' element={<Navigate to='/' replace />} />
     </Routes>
   );

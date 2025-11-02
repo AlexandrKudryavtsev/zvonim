@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useMeeting } from '@/hooks/useMeeting';
 import { VideoCall } from '@/components/VideoCall';
 import { Button } from '@/components/ui/Button';
+import { IconButton } from '@/components/ui/IconButton';
+import { LeaveIcon } from '@/components/ui/Icon';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useMeetingStore } from '@/stores';
 import type { MeetingData } from '@/types/meeting';
@@ -19,8 +21,6 @@ export const Meeting: React.FC<MeetingProps> = ({ meetingData, onLeaveMeeting })
 
   const {
     users,
-    isConnected,
-    error,
     callState,
     leaveMeeting,
     startCallWithUser,
@@ -42,8 +42,10 @@ export const Meeting: React.FC<MeetingProps> = ({ meetingData, onLeaveMeeting })
     onLeaveMeeting();
   };
 
-  const copyMeetingId = () => {
+  const handleInvite = () => {
     navigator.clipboard.writeText(meetingData.meetingId);
+    // TODO: добавить toast уведомление
+    alert(`ID встречи скопирован: ${meetingData.meetingId}`);
   };
 
   const handleStartCallWithUser = async (targetUserId: string) => {
@@ -75,53 +77,28 @@ export const Meeting: React.FC<MeetingProps> = ({ meetingData, onLeaveMeeting })
     <MainLayout>
       <div className={cls.container}>
         <div className={cls.header}>
-          <div className={cls.MeetingInfo}>
-            <h1 className={cls.title}>{meetingData.meetingName}</h1>
-            <div className={cls.MeetingDetails}>
-              <div className={cls.detailItem}>
-                <span className={cls.detailLabel}>ID встречи:</span>
-                <code className={cls.MeetingId}>{meetingData.meetingId}</code>
-                <Button
-                  variant='secondary'
-                  size='small'
-                  onClick={copyMeetingId}
-                  className={cls.copyButton}
-                >
-                  Копировать
-                </Button>
-              </div>
-              <div className={cls.detailItem}>
-                <span className={cls.detailLabel}>Ваше имя:</span>
-                <span className={cls.userName}>{meetingData.userName}</span>
-              </div>
-            </div>
-          </div>
+          <div className={cls.headerMain}>
+            <IconButton
+              icon={<LeaveIcon />}
+              onClick={handleLeaveMeeting}
+              variant='danger'
+              size='large'
+              className={cls.leaveButton}
+            />
 
-          <div className={cls.connectionStatus}>
-            <div className={cls.statusItem}>
-              <div className={cn(cls.statusDot, { [cls.connected]: isConnected })} />
-              <span>WebSocket {isConnected ? 'подключен' : 'отключен'}</span>
-            </div>
-            <div className={cls.statusItem}>
-              <div className={cn(cls.statusDot, { [cls.connected]: callState.hasLocalStream })} />
-              <span>Медиа {callState.hasLocalStream ? 'доступно' : 'не готово'}</span>
-            </div>
+            <h1 className={cls.title}>
+              {meetingData.meetingName}
+            </h1>
           </div>
 
           <Button
-            variant='danger'
-            onClick={handleLeaveMeeting}
-            className={cls.leaveButton}
+            variant='secondary'
+            onClick={handleInvite}
+            className={cls.inviteButton}
           >
-            Покинуть встречу
+            Пригласить
           </Button>
         </div>
-
-        {error && (
-          <div className={cls.error}>
-            {error}
-          </div>
-        )}
 
         <div className={cls.mediaControls}>
           <h3>Управление медиа</h3>
